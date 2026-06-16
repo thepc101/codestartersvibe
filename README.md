@@ -22,6 +22,7 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 | `api/project-delete.js` | Delete a submission (its author, or any admin). |
 | `api/admin.js` | **Owner only.** Every account + every submission (full detail). |
 | `api/admin-user.js` | **Owner only.** Deactivate / reactivate / remove an account, or bulk-deactivate all students. |
+| `api/settings.js` | Portal-access flags. `GET` is public; `POST` is owner-only (open/close signups & logins). |
 | `api/health.js` | Connectivity check — `/api/health` returns whether Redis is wired up. |
 | `api/_redis.js`, `api/_auth.js` | Shared Redis client + auth helpers (scrypt password hashing, session tokens). |
 | `cs-logo.png` | The Codestarters brand mark. |
@@ -42,6 +43,7 @@ The first account created is the permanent owner. From the portal's Owner dashbo
 - **Deactivate** an account — they're logged out immediately and can't sign back in (their session token stops working everywhere). **Reactivate** restores access.
 - **Remove** an account — deletes the account *and* all of its submissions. Irreversible.
 - **Deactivate all students** — one button to lock every non-admin account when the bootcamp ends. The owner stays active.
+- **Open / close the portal** — toggle **New signups** and **Student logins** on or off from the "Portal access" panel. Closing logins blocks students from signing in (existing sessions aside) while the owner can always get in; closing signups stops new accounts. The signed-out login page reflects the closed state.
 - Edit or delete any submission, and see every account + submission.
 
 Guards: the owner can't deactivate or remove their own account (no lock-out), and deactivated users are treated as signed-out across the whole API.
@@ -51,6 +53,7 @@ Guards: the owner can't deactivate or remove their own account (no lock-out), an
 | Key | Type | Purpose |
 | --- | --- | --- |
 | `meta:owner` | string | First account's id (set once, atomically). |
+| `meta:signupOpen` / `meta:loginOpen` | int | Portal-access flags (`0` = closed; absent/`1` = open). |
 | `user:<id>` | json | Account record (username, first/last name, scrypt hash + salt, role, active, createdAt). |
 | `user:byname:<lower>` | string | Username → id (uniqueness + login lookup). |
 | `users:all` | list | All account ids. |

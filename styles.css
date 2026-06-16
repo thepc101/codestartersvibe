@@ -381,3 +381,5 @@
 .ustatus.on { color: var(--green); background: rgba(12,206,107,.08); border-color: rgba(12,206,107,.3); }
 .ustatus.off { color: var(--faint); background: var(--panel-2); }
 .uactions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.auth-notice { font-size: 13px; color: var(--muted); background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; text-align: center; line-height: 1.5; }

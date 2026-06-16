@@ -14,6 +14,13 @@ export const PROJECTS_KEY = 'cs:projects';
 export const hasRedis = Boolean(url && token);
 export const redis = hasRedis ? new Redis({ url, token }) : null;
 
+// Global portal access flags (default OPEN when unset).
+export async function getSettings() {
+  const [s, l] = await Promise.all([redis.get('meta:signupOpen'), redis.get('meta:loginOpen')]);
+  const open = (v) => !(v === 0 || v === '0' || v === false);
+  return { signupOpen: open(s), loginOpen: open(l) };
+}
+
 // Resolve the id index into full project records (newest first), skipping any
 // that were deleted out from under the index.
 export async function loadProjects(start = 0, end = 199) {

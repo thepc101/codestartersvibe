@@ -1,4 +1,4 @@
-import { redis, hasRedis } from './_redis.js';
+import { redis, hasRedis, getSettings } from './_redis.js';
 import { verifyPassword, createSession, publicUser } from './_auth.js';
 
 export default async function handler(req, res) {
@@ -19,6 +19,11 @@ export default async function handler(req, res) {
   }
   if (user.active === false) {
     return res.status(403).json({ error: 'This account has been deactivated. Contact the organizers.' });
+  }
+  // When logins are closed, students are blocked but admins can always get in.
+  if (user.role !== 'admin') {
+    const { loginOpen } = await getSettings();
+    if (!loginOpen) return res.status(403).json({ error: 'Logins are currently closed by the organizers.' });
   }
 
   const token = await createSession(id);

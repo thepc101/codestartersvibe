@@ -1,4 +1,4 @@
-import { redis, hasRedis } from './_redis.js';
+import { redis, hasRedis, getSettings } from './_redis.js';
 import { USER_RE, makeSalt, hashPassword, newId, createSession, publicUser } from './_auth.js';
 
 export default async function handler(req, res) {
@@ -13,6 +13,14 @@ export default async function handler(req, res) {
 
   if (!USER_RE.test(username)) return res.status(400).json({ error: 'Username must be 3–30 characters: letters, numbers, _ or .' });
   if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+
+  // If signups are closed, block new accounts — but always allow the very first
+  // account so the portal can be bootstrapped.
+  const existingOwner = await redis.get('meta:owner');
+  if (existingOwner) {
+    const { signupOpen } = await getSettings();
+    if (!signupOpen) return res.status(403).json({ error: 'New account signups are currently closed.' });
+  }
 
   const id = newId();
   const lower = username.toLowerCase();

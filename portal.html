@@ -32,7 +32,8 @@
     <!-- Auth: log in / create account -->
     <div class="login-card" id="authCard">
       <div class="login-brand"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</div>
-      <div class="auth-tabs">
+      <div class="auth-notice" id="authNotice" style="display:none;"></div>
+      <div class="auth-tabs" id="authTabs">
         <button class="auth-tab active" id="tabLogin" type="button">Log in</button>
         <button class="auth-tab" id="tabSignup" type="button">Create account</button>
       </div>
@@ -147,6 +148,9 @@
         <h3 class="portal-sub">Owner dashboard</h3>
         <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">You're the owner. Manage accounts and view every submission below.</p>
         <div class="admin-stats" id="adminStats"></div>
+        <h4 class="admin-h">Portal access</h4>
+        <div class="admin-table" id="accessTable"><div class="aempty">Loading…</div></div>
+
         <h4 class="admin-h">Accounts</h4>
         <div class="admin-bulk"><button type="button" class="pbtn danger" id="deacAllBtn">Deactivate all students</button></div>
         <div class="admin-table" id="adminUsers"><div class="aempty">Loading…</div></div>
@@ -176,6 +180,7 @@
       document.getElementById('meTag').textContent = 'Owner';
       adminPanel.style.display = 'block';
       loadAdmin();
+      loadAccess();
     } else {
       adminPanel.style.display = 'none';
     }
@@ -352,6 +357,25 @@
     document.getElementById('adminProjects').innerHTML = projects.length ? projects.map(projectCard).join('') : '<div class="showcase-empty">No submissions yet.</div>';
   }
 
+  // ---- Portal access (open/close signups & logins) ----
+  async function loadAccess() {
+    const el = document.getElementById('accessTable');
+    const { ok, data } = await api('/api/settings');
+    if (!ok) return;
+    const row = (key, name, desc, open) => `<div class="urow">
+      <div class="uinfo"><span class="uname">${name}</span><span class="uhandle">${desc}</span></div>
+      <span class="ustatus ${open ? 'on' : 'off'}">${open ? 'Open' : 'Closed'}</span>
+      <span class="uactions"><button type="button" class="pbtn ${open ? 'danger' : ''}" data-access="${key}" data-to="${open ? '0' : '1'}">${open ? 'Close' : 'Open'}</button></span>
+    </div>`;
+    el.innerHTML =
+      row('signupOpen', 'New signups', 'Allow people to create accounts', data.signupOpen) +
+      row('loginOpen', 'Student logins', 'Allow students to log in (you can always get in)', data.loginOpen);
+  }
+  async function toggleAccess(key, value) {
+    const { ok, data } = await api('/api/settings', { method: 'POST', auth: true, body: { [key]: value } });
+    if (ok) loadAccess(); else alert((data && data.error) || 'Could not update.');
+  }
+
   async function handleUserAction(action, id) {
     if (action === 'delete' && !confirm('Remove this account and ALL of its submissions? This cannot be undone.')) return;
     if (action === 'deactivate' && !confirm('Deactivate this account? They will be logged out and unable to sign back in.')) return;
@@ -374,14 +398,31 @@
     if (dl) { e.preventDefault(); deleteProject(dl.getAttribute('data-del')); return; }
     const ua = e.target.closest('[data-uact]');
     if (ua) { e.preventDefault(); handleUserAction(ua.getAttribute('data-uact'), ua.getAttribute('data-uid')); return; }
+    const ax = e.target.closest('[data-access]');
+    if (ax) { e.preventDefault(); toggleAccess(ax.getAttribute('data-access'), ax.getAttribute('data-to') === '1'); return; }
   });
+
+  // ---- Reflect access flags on the signed-out auth card ----
+  async function loadAuthSettings() {
+    const { ok, data } = await api('/api/settings');
+    if (!ok) return;
+    const notice = document.getElementById('authNotice');
+    const msgs = [];
+    if (!data.signupOpen) {
+      document.getElementById('tabSignup').style.display = 'none';
+      setAuthMode('login');
+      msgs.push('New signups are closed — log in with your existing account.');
+    }
+    if (!data.loginOpen) msgs.push('Logins are currently closed by the organizers.');
+    if (msgs.length) { notice.textContent = msgs.join(' '); notice.style.display = 'block'; }
+  }
 
   // ---- Restore session ----
   (async () => {
-    if (!getTok()) return;
+    if (!getTok()) { loadAuthSettings(); return; }
     const { ok, data } = await api('/api/me', { auth: true });
     if (ok && data.user) enterPortal(data.user);
-    else clearTok();
+    else { clearTok(); loadAuthSettings(); }
   })();
 </script>
 </body>
