@@ -1,4 +1,5 @@
 import { redis, hasRedis, PROJECTS_KEY } from './_redis.js';
+import { getUser, newId } from './_auth.js';
 
 const MAX = 500; // keep the newest 500 submissions
 
@@ -14,6 +15,10 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'Database not configured yet. Connect Redis in Vercel → Storage.' });
   }
 
+  // Must be signed in to publish.
+  const user = await getUser(req);
+  if (!user) return res.status(401).json({ error: 'Please sign in to publish a project.' });
+
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
   body = body || {};
@@ -21,7 +26,6 @@ export default async function handler(req, res) {
   // Honeypot — bots fill hidden fields; humans never do.
   if (str(body._honey, 100)) return res.status(200).json({ ok: true });
 
-  const name = str(body.name, 120);
   const title = str(body.project_title, 160);
   const category = str(body.category, 40);
   const writeup = str(body.writeup, 2000);
@@ -29,16 +33,18 @@ export default async function handler(req, res) {
   const githubLink = str(body.github_link, 500);
   const screenshots = str(body.screenshots, 500);
 
-  if (!name || !title || !category || !writeup) {
-    return res.status(400).json({ error: 'Please fill in name, project title, category, and write-up.' });
+  if (!title || !category || !writeup) {
+    return res.status(400).json({ error: 'Please fill in project title, category, and write-up.' });
   }
   if (!CATEGORIES.includes(category)) {
     return res.status(400).json({ error: 'Invalid category.' });
   }
 
   const record = {
-    id: (globalThis.crypto?.randomUUID?.() || String(Date.now()) + Math.round(Math.random() * 1e6)),
-    name, title, category, writeup,
+    id: newId(),
+    name: user.username,   // author is the signed-in account
+    userId: user.id,
+    title, category, writeup,
     projectLink, githubLink, screenshots,
     ts: Date.now(),
   };

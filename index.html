@@ -304,6 +304,29 @@
   .submit-msg.err { color: var(--red); }
   @media (max-width: 560px) { .sf-row { grid-template-columns: 1fr; } }
 
+  /* auth tabs */
+  .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
+  .auth-tab { font-family: inherit; font-size: 13.5px; font-weight: 500; padding: 9px 10px; border-radius: 7px; border: none; cursor: pointer; background: transparent; color: var(--muted); transition: background .15s, color .15s; }
+  .auth-tab:hover { color: var(--text); }
+  .auth-tab.active { background: var(--panel-2); color: var(--text); }
+  .auth-hint { text-align: center; color: var(--faint); font-size: 13px; margin-top: 16px; }
+  .auth-hint a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* admin panel */
+  #adminPanel { margin-top: 12px; padding-top: 36px; border-top: 1px solid var(--border); }
+  .admin-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .astat { flex: 1; min-width: 120px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+  .astat .an { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; }
+  .astat .al { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .admin-h { font-size: 14px; font-weight: 600; margin: 26px 0 12px; }
+  .admin-table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .arow { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .arow:last-child { border-bottom: none; }
+  .arow > span:first-child { color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .arow .amono { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); padding: 3px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--panel-2); }
+  .arow .amuted { color: var(--faint); font-size: 12.5px; white-space: nowrap; }
+  .aempty { padding: 22px 16px; text-align: center; color: var(--faint); font-size: 13.5px; }
+
   /* ---------- CTA ---------- */
   .cta-band { border: 1px solid var(--border); border-radius: 16px; padding: 64px 40px; text-align: center; position: relative; overflow: hidden; background: var(--panel); }
   .cta-band::before { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 120% at 50% 0%, rgba(255,255,255,0.06), transparent 70%); pointer-events: none; }
@@ -572,31 +595,105 @@
   <div class="wrap">
     <div class="section-head reveal" id="portalIntro">
       <span class="eyebrow"><span class="dot"></span> Student Portal</span>
-      <h2>Log in to your <span class="gradient-text">Codestarters portal.</span></h2>
-      <p>Materials, the project submission form, and the Discord — all behind your cohort login.</p>
+      <h2>Create your <span class="gradient-text">Codestarters account.</span></h2>
+      <p>Make an account to publish projects to the Showcase and access cohort materials. Free, takes a second.</p>
     </div>
 
-    <!-- Login -->
-    <div class="login-card reveal" id="loginCard">
+    <!-- Auth: log in / create account -->
+    <div class="login-card reveal" id="authCard">
       <div class="login-brand"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</div>
-      <h2>Member sign in</h2>
-      <p class="sub">Use the credentials shared with your cohort.</p>
-      <form id="loginForm" autocomplete="off">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" type="button">Log in</button>
+        <button class="auth-tab" id="tabSignup" type="button">Create account</button>
+      </div>
+      <form id="authForm" autocomplete="off">
         <div class="field">
-          <label for="pUser">Username</label>
-          <input id="pUser" type="text" placeholder="Enter username" autocomplete="username" />
+          <label for="aUser">Username</label>
+          <input id="aUser" name="username" type="text" placeholder="Pick a username" autocomplete="username" />
         </div>
         <div class="field">
-          <label for="pPass">Password</label>
-          <input id="pPass" type="password" placeholder="Enter password" autocomplete="current-password" />
+          <label for="aPass">Password</label>
+          <input id="aPass" name="password" type="password" placeholder="At least 8 characters" autocomplete="current-password" />
         </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn">Unlock portal →</button>
-        <div class="login-err" id="loginErr"></div>
+        <button type="submit" class="btn btn-primary" id="authBtn">Log in →</button>
+        <div class="login-err" id="authErr"></div>
       </form>
+      <p class="auth-hint" id="authHint">New here? <a href="#" id="switchAuth">Create an account</a>.</p>
     </div>
 
-    <!-- Decrypted content injected here -->
-    <div id="portalContent"></div>
+    <!-- Portal dashboard (shown after sign-in) -->
+    <div id="portalContent">
+      <div class="portal-brandbar">
+        <span class="logo" style="font-size:16px;"><span class="mark" style="width:28px;height:28px;"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters AI Bootcamp</span>
+        <span class="portal-brandbar-tag" id="meTag">Student Portal</span>
+      </div>
+      <div class="portal-head">
+        <div>
+          <span class="eyebrow"><span class="dot"></span> Signed in as <b id="meName">—</b></span>
+          <h2 style="margin-top:14px;">Welcome, builder.</h2>
+          <p style="color:var(--muted); margin-top:8px;">Publish your projects and grab everything you need for the Summer Challenge.</p>
+        </div>
+        <button class="btn btn-ghost" id="logoutBtn" style="height:38px; padding:0 16px; font-size:14px;">Log out</button>
+      </div>
+
+      <div class="portal-grid">
+        <a class="portal-card" href="#submit"><h3>Publish a Project</h3><p>Push your build live to the public Showcase — link, repo, write-up.</p><span class="pc-go">Publish →</span></a>
+        <a class="portal-card" href="https://discord.gg/uTjX3P4bZJ" target="_blank" rel="noopener"><h3>Discord Community</h3><p>Mentor help and your cohort — all summer long.</p><span class="pc-go">Join →</span></a>
+        <a class="portal-card" href="#showcase"><h3>The Showcase</h3><p>See everything published by the cohort, newest first.</p><span class="pc-go">View →</span></a>
+      </div>
+
+      <h3 class="portal-sub">Daily materials</h3>
+      <div class="portal-days">
+        <a class="pday" href="#"><b>Day 1</b><span>AI Is Actually Insane</span></a>
+        <a class="pday" href="#"><b>Day 2</b><span>I Can Build Software</span></a>
+        <a class="pday" href="#"><b>Day 3</b><span>AI Can Do Work For Me</span></a>
+        <a class="pday" href="#"><b>Day 4</b><span>AI Can Take Actions</span></a>
+        <a class="pday" href="#"><b>Day 5</b><span>Build Your Own Agent</span></a>
+        <a class="pday" href="#"><b>Day 6</b><span>How Real AI Products Work</span></a>
+        <a class="pday" href="#"><b>Day 7</b><span>Your Journey Starts Here</span></a>
+      </div>
+
+      <h3 class="portal-sub">Tools &amp; accounts cheat sheet</h3>
+      <div class="portal-tools">
+        <span class="ptool">ChatGPT</span><span class="ptool">Claude</span><span class="ptool">Gemini</span>
+        <span class="ptool">Cursor</span><span class="ptool">Lovable</span><span class="ptool">Bolt</span><span class="ptool">Replit</span>
+        <span class="ptool">OpenClaw</span><span class="ptool">Hermes</span><span class="ptool">Featherless AI</span><span class="ptool">Docker</span>
+      </div>
+
+      <h3 class="portal-sub" id="submit">Publish your project</h3>
+      <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">Built something this summer? Publish it and it goes live in the public Showcase instantly under your account.</p>
+      <form id="submitForm" class="submit-form" novalidate>
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+        <div class="sf-row">
+          <div class="sf-field"><label>Project title *</label><input name="project_title" required placeholder="What's it called?" /></div>
+          <div class="sf-field"><label>Category *</label>
+            <select name="category" required>
+              <option value="">Choose a track…</option>
+              <option>AI App</option><option>AI Agent</option><option>AI Automation</option><option>Startup Idea</option>
+            </select>
+          </div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-field"><label>Live project link</label><input name="project_link" type="url" placeholder="https://…" /></div>
+          <div class="sf-field"><label>GitHub repo</label><input name="github_link" type="url" placeholder="https://github.com/…" /></div>
+        </div>
+        <div class="sf-field"><label>Screenshot / demo link</label><input name="screenshots" type="url" placeholder="Drive, Loom… (optional)" /></div>
+        <div class="sf-field"><label>Short write-up *</label><textarea name="writeup" required rows="4" placeholder="What does it do, what did you learn, what's next?"></textarea></div>
+        <button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%; justify-content:center; margin-top:8px;">Publish project →</button>
+        <div class="submit-msg" id="submitMsg"></div>
+      </form>
+
+      <!-- Admin / owner panel -->
+      <div id="adminPanel" style="display:none;">
+        <h3 class="portal-sub">Owner dashboard</h3>
+        <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">You created the first account, so you're the owner. Every account and submission is below.</p>
+        <div class="admin-stats" id="adminStats"></div>
+        <h4 class="admin-h">Accounts</h4>
+        <div class="admin-table" id="adminUsers"><div class="aempty">Loading…</div></div>
+        <h4 class="admin-h">Submissions</h4>
+        <div class="admin-table" id="adminProjects"><div class="aempty">Loading…</div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -730,40 +827,94 @@
   menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
-  // ---- Encrypted portal (AES-GCM, key derived from username:password via PBKDF2) ----
-  const VAULT = {"salt":"bPfieLm2OgoU+w9P0pSzHw==","iv":"94QPQg2Jc7oiEAl0","iter":250000,"ct":"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"};
+  // ---- Accounts / auth (server-side, backed by Redis) ----
+  const TOKEN_KEY = 'cs_token';
+  const getTok = () => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } };
+  const setTok = (t) => { try { localStorage.setItem(TOKEN_KEY, t); } catch {} };
+  const clearTok = () => { try { localStorage.removeItem(TOKEN_KEY); } catch {} };
 
-  const b64ToU8 = (b) => Uint8Array.from(atob(b), c => c.charCodeAt(0));
-  const SS_KEY = 'cs_portal_unlocked';
-
-  async function decryptPortal(username, password) {
-    const enc = new TextEncoder();
-    const baseKey = await crypto.subtle.importKey('raw', enc.encode(username + ':' + password), 'PBKDF2', false, ['deriveKey']);
-    const key = await crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: b64ToU8(VAULT.salt), iterations: VAULT.iter, hash: 'SHA-256' },
-      baseKey, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-    );
-    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToU8(VAULT.iv) }, key, b64ToU8(VAULT.ct));
-    return new TextDecoder().decode(pt); // throws if credentials wrong
+  async function api(path, { method = 'GET', body, auth = false } = {}) {
+    const headers = { 'Accept': 'application/json' };
+    if (body) headers['Content-Type'] = 'application/json';
+    if (auth) { const t = getTok(); if (t) headers['Authorization'] = 'Bearer ' + t; }
+    const res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    let data = {}; try { data = await res.json(); } catch {}
+    return { ok: res.ok, status: res.status, data };
   }
 
-  function showPortal(html) {
-    document.getElementById('portalContent').innerHTML = html;
-    document.getElementById('portalContent').style.display = 'block';
-    document.getElementById('loginCard').style.display = 'none';
+  let submitWired = false;
+  function enterPortal(user) {
+    document.getElementById('authCard').style.display = 'none';
     document.getElementById('portalIntro').style.display = 'none';
-    const lo = document.getElementById('logoutBtn');
-    if (lo) lo.addEventListener('click', () => {
-      try { sessionStorage.removeItem(SS_KEY); } catch (e) {}
-      location.reload();
-    });
+    document.getElementById('portalContent').style.display = 'block';
+    document.getElementById('meName').textContent = user.username;
+    const adminPanel = document.getElementById('adminPanel');
+    if (user.role === 'admin') {
+      document.getElementById('meTag').textContent = 'Owner';
+      adminPanel.style.display = 'block';
+      loadAdmin();
+    } else {
+      adminPanel.style.display = 'none';
+    }
     wireSubmitForm();
   }
 
-  // ---- Project submission (publishes to the Redis-backed showcase via /api/submit) ----
+  // Auth form (handles both log in and create account)
+  let authMode = 'login';
+  const authForm = document.getElementById('authForm');
+  const authErr = document.getElementById('authErr');
+  const authBtn = document.getElementById('authBtn');
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const switchAuth = document.getElementById('switchAuth');
+  const authHint = document.getElementById('authHint');
+
+  function setAuthMode(m) {
+    authMode = m;
+    tabLogin.classList.toggle('active', m === 'login');
+    tabSignup.classList.toggle('active', m === 'signup');
+    authBtn.textContent = (m === 'login' ? 'Log in →' : 'Create account →');
+    document.getElementById('aPass').setAttribute('autocomplete', m === 'login' ? 'current-password' : 'new-password');
+    document.getElementById('aPass').placeholder = (m === 'login' ? 'Your password' : 'At least 8 characters');
+    authHint.innerHTML = (m === 'login')
+      ? 'New here? <a href="#" id="switchAuth">Create an account</a>.'
+      : 'Already have an account? <a href="#" id="switchAuth">Log in</a>.';
+    document.getElementById('switchAuth').addEventListener('click', (e) => { e.preventDefault(); setAuthMode(m === 'login' ? 'signup' : 'login'); });
+    authErr.textContent = '';
+  }
+  tabLogin.addEventListener('click', () => setAuthMode('login'));
+  tabSignup.addEventListener('click', () => setAuthMode('signup'));
+  switchAuth.addEventListener('click', (e) => { e.preventDefault(); setAuthMode('signup'); });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authErr.textContent = '';
+    const username = document.getElementById('aUser').value.trim();
+    const password = document.getElementById('aPass').value;
+    if (!username || !password) { authErr.textContent = 'Enter a username and password.'; return; }
+    authBtn.disabled = true; const orig = authBtn.textContent;
+    authBtn.textContent = (authMode === 'login' ? 'Logging in…' : 'Creating…');
+    const { ok, data } = await api(authMode === 'login' ? '/api/login' : '/api/signup', { method: 'POST', body: { username, password } });
+    authBtn.disabled = false; authBtn.textContent = orig;
+    if (ok && data.token) { setTok(data.token); enterPortal(data.user); }
+    else { authErr.textContent = data.error || 'Something went wrong. Please try again.'; }
+  });
+
+  function wireLogout() {
+    const lo = document.getElementById('logoutBtn');
+    if (lo) lo.addEventListener('click', async () => {
+      try { await api('/api/logout', { method: 'POST', auth: true }); } catch {}
+      clearTok();
+      location.reload();
+    });
+  }
+  wireLogout();
+
+  // ---- Project submission (requires an account; publishes to the showcase) ----
   function wireSubmitForm() {
     const form = document.getElementById('submitForm');
-    if (!form) return;
+    if (!form || submitWired) return;
+    submitWired = true;
     const msg = document.getElementById('submitMsg');
     const btn = document.getElementById('submitBtn');
     form.addEventListener('submit', async (e) => {
@@ -772,30 +923,38 @@
       if (form._honey && form._honey.value) return; // spam bot
       if (!form.checkValidity()) { form.reportValidity(); return; }
       btn.textContent = 'Publishing…'; btn.style.opacity = .7;
-      try {
-        const res = await fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
-        });
-        const data = await res.json().catch(() => ({}));
-        if (res.ok && data.ok) {
-          form.reset();
-          msg.className = 'submit-msg ok';
-          msg.textContent = '✓ Published! Your project is now live in the showcase.';
-          btn.textContent = 'Publish another →';
-          loadShowcase(); // refresh the public gallery
-        } else {
-          throw new Error(data.error || 'Submission failed');
-        }
-      } catch (err) {
+      const { ok, status, data } = await api('/api/submit', { method: 'POST', auth: true, body: Object.fromEntries(new FormData(form).entries()) });
+      btn.style.opacity = 1;
+      if (ok && data.ok) {
+        form.reset();
+        msg.className = 'submit-msg ok';
+        msg.textContent = '✓ Published! Your project is now live in the showcase.';
+        btn.textContent = 'Publish another →';
+        loadShowcase();
+        if (document.getElementById('adminPanel').style.display === 'block') loadAdmin();
+      } else {
         msg.className = 'submit-msg err';
-        msg.textContent = (err && err.message) ? err.message : 'Could not publish right now. Please try again.';
+        msg.textContent = (status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not publish. Please try again.');
         btn.textContent = 'Publish project →';
-      } finally {
-        btn.style.opacity = 1;
       }
     });
+  }
+
+  // ---- Owner dashboard: all accounts + all submissions ----
+  const fmtDate = (ts) => { try { return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); } catch { return ''; } };
+  async function loadAdmin() {
+    const { ok, data } = await api('/api/admin', { auth: true });
+    if (!ok) return;
+    const users = data.users || [], projects = data.projects || [];
+    document.getElementById('adminStats').innerHTML =
+      `<div class="astat"><div class="an">${users.length}</div><div class="al">Accounts</div></div>` +
+      `<div class="astat"><div class="an">${projects.length}</div><div class="al">Submissions</div></div>`;
+    document.getElementById('adminUsers').innerHTML = users.length
+      ? users.map(u => `<div class="arow"><span>${esc(u.username)}</span><span class="amono">${esc(u.role)}</span><span class="amuted">${fmtDate(u.createdAt)}</span></div>`).join('')
+      : '<div class="aempty">No accounts yet.</div>';
+    document.getElementById('adminProjects').innerHTML = projects.length
+      ? projects.map(p => `<div class="arow"><span>${esc(p.title)}</span><span class="amono">${esc(p.category)}</span><span class="amuted">by ${esc(p.name || '—')}</span></div>`).join('')
+      : '<div class="aempty">No submissions yet.</div>';
   }
 
   // ---- Public showcase: load published projects from the database ----
@@ -836,31 +995,13 @@
   }
   loadShowcase();
 
-  const loginForm = document.getElementById('loginForm');
-  const loginErr = document.getElementById('loginErr');
-  const loginBtn = document.getElementById('loginBtn');
-
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    loginErr.textContent = '';
-    loginBtn.textContent = 'Unlocking…'; loginBtn.style.opacity = .7;
-    const u = document.getElementById('pUser').value.trim();
-    const p = document.getElementById('pPass').value;
-    try {
-      const html = await decryptPortal(u, p);
-      try { sessionStorage.setItem(SS_KEY, html); } catch (err) {}
-      showPortal(html);
-    } catch (err) {
-      loginErr.textContent = 'Incorrect username or password.';
-      loginBtn.textContent = 'Unlock portal →'; loginBtn.style.opacity = 1;
-    }
-  });
-
-  // Restore session if already unlocked on this device
-  try {
-    const cached = sessionStorage.getItem(SS_KEY);
-    if (cached) showPortal(cached);
-  } catch (e) {}
+  // Restore session if a valid token is already stored on this device
+  (async () => {
+    if (!getTok()) return;
+    const { ok, data } = await api('/api/me', { auth: true });
+    if (ok && data.user) enterPortal(data.user);
+    else clearTok();
+  })();
 </script>
 </body>
 </html>
