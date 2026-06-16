@@ -273,8 +273,8 @@
       const isEdit = !!editingId;
       btn.textContent = isEdit ? 'Saving…' : 'Publishing…'; btn.style.opacity = .7;
       const payload = Object.fromEntries(new FormData(form).entries());
-      if (isEdit) payload.id = editingId;
-      const { ok, status, data } = await api(isEdit ? '/api/project-update' : '/api/submit', { method: 'POST', auth: true, body: payload });
+      if (isEdit) { payload.id = editingId; payload.action = 'update'; }
+      const { ok, status, data } = await api(isEdit ? '/api/project' : '/api/submit', { method: 'POST', auth: true, body: payload });
       btn.style.opacity = 1;
       if (ok && data.ok) {
         cancelEdit();
@@ -291,7 +291,7 @@
 
   async function deleteProject(id) {
     if (!confirm('Delete this project? This cannot be undone.')) return;
-    const { ok, status, data } = await api('/api/project-delete', { method: 'POST', auth: true, body: { id } });
+    const { ok, status, data } = await api('/api/project', { method: 'POST', auth: true, body: { action: 'delete', id } });
     if (ok && data.ok) { if (editingId === id) cancelEdit(); refreshLists(); }
     else alert((status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not delete.'));
   }
@@ -310,7 +310,7 @@
     e.preventDefault();
     const msg = document.getElementById('profileMsg'); msg.className = 'submit-msg';
     const body = { firstName: document.getElementById('setFirst').value.trim(), lastName: document.getElementById('setLast').value.trim() };
-    const { ok, data } = await api('/api/account-update', { method: 'POST', auth: true, body });
+    const { ok, data } = await api('/api/me', { method: 'POST', auth: true, body });
     if (ok && data.ok) { me = data.user; document.getElementById('meGreeting').textContent = 'Welcome, ' + displayName(data.user) + '.'; msg.className = 'submit-msg ok'; msg.textContent = '✓ Profile saved.'; }
     else { msg.className = 'submit-msg err'; msg.textContent = data.error || 'Could not save.'; }
   });
@@ -319,7 +319,7 @@
     const form = e.target; const msg = document.getElementById('passwordMsg'); msg.className = 'submit-msg';
     const body = { currentPassword: form.currentPassword.value, newPassword: form.newPassword.value };
     if (!body.newPassword) { msg.className = 'submit-msg err'; msg.textContent = 'Enter a new password.'; return; }
-    const { ok, data } = await api('/api/account-update', { method: 'POST', auth: true, body });
+    const { ok, data } = await api('/api/me', { method: 'POST', auth: true, body });
     if (ok && data.ok) { form.reset(); msg.className = 'submit-msg ok'; msg.textContent = '✓ Password updated.'; }
     else { msg.className = 'submit-msg err'; msg.textContent = data.error || 'Could not update password.'; }
   });
@@ -379,13 +379,13 @@
   async function handleUserAction(action, id) {
     if (action === 'delete' && !confirm('Remove this account and ALL of its submissions? This cannot be undone.')) return;
     if (action === 'deactivate' && !confirm('Deactivate this account? They will be logged out and unable to sign back in.')) return;
-    const { ok, data } = await api('/api/admin-user', { method: 'POST', auth: true, body: { action, id } });
+    const { ok, data } = await api('/api/admin', { method: 'POST', auth: true, body: { action, id } });
     if (ok && data.ok) { loadAdmin(); loadMine(); }
     else alert(data.error || 'Action failed.');
   }
   document.getElementById('deacAllBtn').addEventListener('click', async () => {
     if (!confirm('Deactivate ALL student accounts? Use this when the bootcamp ends — you (owner) stay active.')) return;
-    const { ok, data } = await api('/api/admin-user', { method: 'POST', auth: true, body: { action: 'deactivate-students' } });
+    const { ok, data } = await api('/api/admin', { method: 'POST', auth: true, body: { action: 'deactivate-students' } });
     if (ok && data.ok) { alert('Deactivated ' + data.deactivated + ' student account(s).'); loadAdmin(); }
     else alert((data && data.error) || 'Failed.');
   });

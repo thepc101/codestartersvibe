@@ -12,18 +12,17 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 | `app.js` | Shared client helpers (API client, session token, project cards, showcase). |
 | `api/signup.js` | Create an account (optional first/last name). **The first account ever created becomes the owner/admin.** |
 | `api/login.js` | Log in → returns a session token. Rejects deactivated accounts. |
-| `api/me.js` | Returns the current account for a session token. |
+| `api/me.js` | `GET` the current account; `POST` to update your first/last name and/or change password. |
 | `api/logout.js` | Ends a session. |
-| `api/account-update.js` | Update your own first/last name and/or change your password. |
 | `api/submit.js` | Publish a project (**requires a logged-in account**). |
 | `api/projects.js` | Public showcase feed (newest 200). |
 | `api/mine.js` | The signed-in user's own submissions. |
-| `api/project-update.js` | Edit a submission (its author, or any admin). |
-| `api/project-delete.js` | Delete a submission (its author, or any admin). |
-| `api/admin.js` | **Owner only.** Every account + every submission (full detail). |
-| `api/admin-user.js` | **Owner only.** Deactivate / reactivate / remove an account, or bulk-deactivate all students. |
+| `api/project.js` | `POST { action: 'update' \| 'delete', id }` — edit/delete a submission (its author, or any admin). |
+| `api/admin.js` | **Owner only.** `GET` every account + submission; `POST` to deactivate / reactivate / remove an account or bulk-deactivate all students. |
 | `api/settings.js` | Portal-access flags. `GET` is public; `POST` is owner-only (open/close signups & logins). |
 | `api/health.js` | Connectivity check — `/api/health` returns whether Redis is wired up. |
+
+> **Vercel Hobby caps a deployment at 12 Serverless Functions** (files in `/api`, except `_`-prefixed helpers). This project ships **11**. If you add new routes and the deploy fails with a function-limit error, fold related actions into an existing function (by HTTP method or an `action` field) instead of adding files.
 | `api/_redis.js`, `api/_auth.js` | Shared Redis client + auth helpers (scrypt password hashing, session tokens). |
 | `cs-logo.png` | The Codestarters brand mark. |
 | `package.json` | One dependency: `@upstash/redis`. Vercel installs it on deploy. |
