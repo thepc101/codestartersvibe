@@ -25,7 +25,6 @@ export default async function handler(req, res) {
   const title = str(body.project_title, 160);
   const category = str(body.category, 40);
   const writeup = str(body.writeup, 2000);
-  const email = str(body.email, 200);
   const projectLink = str(body.project_link, 500);
   const githubLink = str(body.github_link, 500);
   const screenshots = str(body.screenshots, 500);
@@ -41,7 +40,6 @@ export default async function handler(req, res) {
     id: (globalThis.crypto?.randomUUID?.() || String(Date.now()) + Math.round(Math.random() * 1e6)),
     name, title, category, writeup,
     projectLink, githubLink, screenshots,
-    email,                 // stored for organizers only — never returned by /api/projects
     ts: Date.now(),
   };
 

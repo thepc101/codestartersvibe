@@ -8,7 +8,7 @@ Landing page, login-gated student portal, and a **Redis-backed project showcase*
 | --- | --- |
 | `index.html` | The whole front-end — landing page, curriculum, portal, and the public Showcase. No build step. |
 | `api/submit.js` | Serverless function. `POST` a project → saved to Redis. |
-| `api/projects.js` | Serverless function. `GET` the published projects (newest 200), email stripped. |
+| `api/projects.js` | Serverless function. `GET` the published projects (newest 200). |
 | `api/_redis.js` | Shared Redis client (reads Vercel/Upstash env vars). |
 | `cs-logo.png` | The Codestarters brand mark. |
 | `package.json` | One dependency: `@upstash/redis`. Vercel installs it on deploy. |
@@ -17,7 +17,7 @@ Landing page, login-gated student portal, and a **Redis-backed project showcase*
 
 1. A student logs into the **portal** (the login is client-side AES-GCM encrypted — see below) and fills the **Publish your project** form.
 2. The form `POST`s JSON to `/api/submit`, which validates it and `LPUSH`es a record onto the Redis list `cs:projects` (capped at the newest 500).
-3. The public **Showcase** section on the home page calls `/api/projects` and renders every published project — newest first. Email is never returned to the public feed.
+3. The public **Showcase** section on the home page calls `/api/projects` and renders every published project — newest first. No email or personal contact info is collected at all.
 
 > Publishing is behind the cohort login to keep spam out; the Showcase itself is public. There's no manual approval step — projects go live immediately. (To add moderation later, give each record an `approved: false` flag in `api/submit.js` and filter on it in `api/projects.js`.)
 
@@ -38,7 +38,7 @@ That's it — no schema, no migrations. Upstash has a free tier that's plenty fo
 ### Reading / clearing data
 
 In the Upstash console (linked from Vercel's Storage tab) you can run Redis commands directly:
-- `LRANGE cs:projects 0 -1` — list every submission (includes emails).
+- `LRANGE cs:projects 0 -1` — list every submission.
 - `DEL cs:projects` — wipe all submissions (e.g. to reset between cohorts).
 
 ---

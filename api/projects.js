@@ -13,11 +13,7 @@ export default async function handler(req, res) {
 
   try {
     const raw = await redis.lrange(PROJECTS_KEY, 0, 199); // newest 200
-    const projects = raw.map((p) => {
-      const o = typeof p === 'string' ? JSON.parse(p) : p; // @upstash auto-parses; guard anyway
-      const { email, ...pub } = o; // strip private field
-      return pub;
-    });
+    const projects = raw.map((p) => (typeof p === 'string' ? JSON.parse(p) : p)); // @upstash auto-parses; guard anyway
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     return res.status(200).json({ projects, configured: true });
   } catch (err) {
