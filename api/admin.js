@@ -1,7 +1,7 @@
-import { redis, hasRedis, PROJECTS_KEY } from './_redis.js';
+import { redis, hasRedis, loadProjects } from './_redis.js';
 import { getUser, publicUser } from './_auth.js';
 
-// Owner/admin only. Returns every account and every submission.
+// Owner/admin only. Returns every account and every submission (full detail).
 export default async function handler(req, res) {
   if (!hasRedis) return res.status(503).json({ error: 'Database not configured yet.' });
   const user = await getUser(req);
@@ -15,8 +15,7 @@ export default async function handler(req, res) {
     users = raw.filter(Boolean).map((u) => publicUser(typeof u === 'string' ? JSON.parse(u) : u));
   }
 
-  const rawProjects = await redis.lrange(PROJECTS_KEY, 0, 999);
-  const projects = rawProjects.map((p) => (typeof p === 'string' ? JSON.parse(p) : p));
+  const projects = await loadProjects(0, 999); // every submission, full detail
 
   return res.status(200).json({ users, projects });
 }

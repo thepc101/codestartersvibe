@@ -257,6 +257,10 @@
   .proj-links a { font-size: 13.5px; font-weight: 500; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
   .proj-links a:hover { color: #fff; }
   .proj-links a svg { width: 14px; height: 14px; }
+  .proj-ctrl { display: flex; gap: 8px; margin-top: 14px; }
+  .pbtn { font-family: inherit; font-size: 12.5px; font-weight: 500; padding: 6px 12px; border-radius: 7px; cursor: pointer; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); transition: border-color .15s, background .15s; }
+  .pbtn:hover { border-color: var(--border-strong); background: #161616; }
+  .pbtn.danger:hover { border-color: #5a2020; background: #1a0e0e; color: #ff8a8a; }
 
   /* ---------- PORTAL / LOGIN ---------- */
   .login-card { max-width: 420px; margin: 0 auto; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 32px; }
@@ -660,8 +664,9 @@
         <span class="ptool">OpenClaw</span><span class="ptool">Hermes</span><span class="ptool">Featherless AI</span><span class="ptool">Docker</span>
       </div>
 
-      <h3 class="portal-sub" id="submit">Publish your project</h3>
-      <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">Built something this summer? Publish it and it goes live in the public Showcase instantly under your account.</p>
+      <h3 class="portal-sub" id="submitHead">Publish your project</h3>
+      <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;" id="submitIntro">Built something this summer? Publish it and it goes live in the public Showcase instantly under your account.</p>
+      <p id="editNote" style="display:none; color:var(--text); font-size:14px; margin-bottom:18px;">Editing an existing project. <a href="#" id="cancelEdit" style="color:var(--text); text-decoration:underline;">Cancel and publish a new one instead</a>.</p>
       <form id="submitForm" class="submit-form" novalidate>
         <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
         <div class="sf-row">
@@ -683,15 +688,19 @@
         <div class="submit-msg" id="submitMsg"></div>
       </form>
 
+      <!-- The signed-in user's own submissions (edit / delete) -->
+      <h3 class="portal-sub">Your submissions</h3>
+      <div class="showcase-grid" id="mySubsGrid"><div class="showcase-empty">Loading…</div></div>
+
       <!-- Admin / owner panel -->
       <div id="adminPanel" style="display:none;">
         <h3 class="portal-sub">Owner dashboard</h3>
-        <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">You created the first account, so you're the owner. Every account and submission is below.</p>
+        <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">You created the first account, so you're the owner. Every account and submission is below — you can edit or delete any of them.</p>
         <div class="admin-stats" id="adminStats"></div>
         <h4 class="admin-h">Accounts</h4>
         <div class="admin-table" id="adminUsers"><div class="aempty">Loading…</div></div>
-        <h4 class="admin-h">Submissions</h4>
-        <div class="admin-table" id="adminProjects"><div class="aempty">Loading…</div></div>
+        <h4 class="admin-h">Every submission</h4>
+        <div class="showcase-grid" id="adminProjects"><div class="showcase-empty">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -843,7 +852,9 @@
   }
 
   let submitWired = false;
+  let me = null; // the signed-in account, or null
   function enterPortal(user) {
+    me = user;
     document.getElementById('authCard').style.display = 'none';
     document.getElementById('portalIntro').style.display = 'none';
     document.getElementById('portalContent').style.display = 'block';
@@ -857,6 +868,8 @@
       adminPanel.style.display = 'none';
     }
     wireSubmitForm();
+    loadMine();
+    loadShowcase(); // re-render so edit/delete controls appear on cards you own
   }
 
   // Auth form (handles both log in and create account)
@@ -910,7 +923,40 @@
   }
   wireLogout();
 
-  // ---- Project submission (requires an account; publishes to the showcase) ----
+  // ---- Project submission (create + edit; requires an account) ----
+  let editingId = null;
+  function refreshLists() {
+    loadShowcase();
+    loadMine();
+    if (me && me.role === 'admin') loadAdmin();
+  }
+  function startEdit(p) {
+    editingId = p.id;
+    const f = document.getElementById('submitForm');
+    f.project_title.value = p.title || '';
+    f.category.value = p.category || '';
+    f.project_link.value = p.projectLink || '';
+    f.github_link.value = p.githubLink || '';
+    f.screenshots.value = p.screenshots || '';
+    f.writeup.value = p.writeup || '';
+    document.getElementById('submitHead').textContent = 'Edit your project';
+    document.getElementById('submitIntro').style.display = 'none';
+    document.getElementById('editNote').style.display = 'block';
+    document.getElementById('submitBtn').textContent = 'Save changes →';
+    document.getElementById('submitMsg').textContent = '';
+    document.getElementById('submitHead').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEdit() {
+    editingId = null;
+    document.getElementById('submitForm').reset();
+    document.getElementById('submitHead').textContent = 'Publish your project';
+    document.getElementById('submitIntro').style.display = 'block';
+    document.getElementById('editNote').style.display = 'none';
+    document.getElementById('submitBtn').textContent = 'Publish project →';
+    document.getElementById('submitMsg').textContent = '';
+  }
+  document.getElementById('cancelEdit').addEventListener('click', (e) => { e.preventDefault(); cancelEdit(); });
+
   function wireSubmitForm() {
     const form = document.getElementById('submitForm');
     if (!form || submitWired) return;
@@ -922,22 +968,49 @@
       msg.className = 'submit-msg';
       if (form._honey && form._honey.value) return; // spam bot
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      btn.textContent = 'Publishing…'; btn.style.opacity = .7;
-      const { ok, status, data } = await api('/api/submit', { method: 'POST', auth: true, body: Object.fromEntries(new FormData(form).entries()) });
+      const isEdit = !!editingId;
+      btn.textContent = isEdit ? 'Saving…' : 'Publishing…'; btn.style.opacity = .7;
+      const payload = Object.fromEntries(new FormData(form).entries());
+      if (isEdit) payload.id = editingId;
+      const { ok, status, data } = await api(isEdit ? '/api/project-update' : '/api/submit', { method: 'POST', auth: true, body: payload });
       btn.style.opacity = 1;
       if (ok && data.ok) {
-        form.reset();
+        cancelEdit();
         msg.className = 'submit-msg ok';
-        msg.textContent = '✓ Published! Your project is now live in the showcase.';
-        btn.textContent = 'Publish another →';
-        loadShowcase();
-        if (document.getElementById('adminPanel').style.display === 'block') loadAdmin();
+        msg.textContent = isEdit ? '✓ Saved your changes.' : '✓ Published! Your project is now live in the showcase.';
+        refreshLists();
       } else {
         msg.className = 'submit-msg err';
-        msg.textContent = (status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not publish. Please try again.');
-        btn.textContent = 'Publish project →';
+        msg.textContent = (status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not save. Please try again.');
+        btn.textContent = isEdit ? 'Save changes →' : 'Publish project →';
       }
     });
+  }
+
+  async function deleteProject(id) {
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    const { ok, status, data } = await api('/api/project-delete', { method: 'POST', auth: true, body: { id } });
+    if (ok && data.ok) { if (editingId === id) cancelEdit(); refreshLists(); }
+    else alert((status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not delete.'));
+  }
+
+  // Edit/Delete buttons are rendered into cards; handle them via delegation.
+  const projCache = {};
+  function canManage(p) { return me && (me.role === 'admin' || me.id === p.userId); }
+  document.addEventListener('click', (e) => {
+    const ed = e.target.closest('[data-edit]');
+    if (ed) { e.preventDefault(); const p = projCache[ed.getAttribute('data-edit')]; if (p) startEdit(p); return; }
+    const dl = e.target.closest('[data-del]');
+    if (dl) { e.preventDefault(); deleteProject(dl.getAttribute('data-del')); return; }
+  });
+
+  // ---- Your submissions ----
+  async function loadMine() {
+    const grid = document.getElementById('mySubsGrid');
+    if (!grid) return;
+    const { ok, data } = await api('/api/mine', { auth: true });
+    const list = (ok && Array.isArray(data.projects)) ? data.projects : [];
+    grid.innerHTML = list.length ? list.map(projectCard).join('') : '<div class="showcase-empty">You haven’t published anything yet.</div>';
   }
 
   // ---- Owner dashboard: all accounts + all submissions ----
@@ -953,8 +1026,8 @@
       ? users.map(u => `<div class="arow"><span>${esc(u.username)}</span><span class="amono">${esc(u.role)}</span><span class="amuted">${fmtDate(u.createdAt)}</span></div>`).join('')
       : '<div class="aempty">No accounts yet.</div>';
     document.getElementById('adminProjects').innerHTML = projects.length
-      ? projects.map(p => `<div class="arow"><span>${esc(p.title)}</span><span class="amono">${esc(p.category)}</span><span class="amuted">by ${esc(p.name || '—')}</span></div>`).join('')
-      : '<div class="aempty">No submissions yet.</div>';
+      ? projects.map(projectCard).join('')
+      : '<div class="showcase-empty">No submissions yet.</div>';
   }
 
   // ---- Public showcase: load published projects from the database ----
@@ -964,15 +1037,20 @@
   const ICON_GH = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>';
 
   function projectCard(p) {
+    if (p && p.id) projCache[p.id] = p; // remember for edit
     const live = safeUrl(p.projectLink), gh = safeUrl(p.githubLink);
     let links = '';
     if (live) links += `<a href="${esc(live)}" target="_blank" rel="noopener">${ICON_LINK} Live</a>`;
     if (gh) links += `<a href="${esc(gh)}" target="_blank" rel="noopener">${ICON_GH} Code</a>`;
+    const ctrl = canManage(p)
+      ? `<div class="proj-ctrl"><button type="button" class="pbtn" data-edit="${esc(p.id)}">Edit</button><button type="button" class="pbtn danger" data-del="${esc(p.id)}">Delete</button></div>`
+      : '';
     return `<article class="proj">
       <div class="proj-top"><h3>${esc(p.title)}</h3><span class="proj-cat">${esc(p.category)}</span></div>
       ${p.name ? `<div class="by">by <b>${esc(p.name)}</b></div>` : ''}
       <p class="desc">${esc(p.writeup)}</p>
       ${links ? `<div class="proj-links">${links}</div>` : ''}
+      ${ctrl}
     </article>`;
   }
 

@@ -13,3 +13,12 @@ const token = clean(process.env.UPSTASH_REDIS_REST_TOKEN || process.env.STORAGE_
 export const PROJECTS_KEY = 'cs:projects';
 export const hasRedis = Boolean(url && token);
 export const redis = hasRedis ? new Redis({ url, token }) : null;
+
+// Resolve the id index into full project records (newest first), skipping any
+// that were deleted out from under the index.
+export async function loadProjects(start = 0, end = 199) {
+  const ids = await redis.lrange(PROJECTS_KEY, start, end);
+  if (!ids.length) return [];
+  const raw = await redis.mget(...ids.map((id) => 'project:' + id));
+  return raw.filter(Boolean).map((p) => (typeof p === 'string' ? JSON.parse(p) : p));
+}

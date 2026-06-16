@@ -13,7 +13,10 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 | `api/logout.js` | Ends a session. |
 | `api/submit.js` | Publish a project (**requires a logged-in account**). |
 | `api/projects.js` | Public showcase feed (newest 200). |
-| `api/admin.js` | **Owner only.** Every account + every submission. |
+| `api/mine.js` | The signed-in user's own submissions. |
+| `api/project-update.js` | Edit a submission (its author, or any admin). |
+| `api/project-delete.js` | Delete a submission (its author, or any admin). |
+| `api/admin.js` | **Owner only.** Every account + every submission (full detail). |
 | `api/health.js` | Connectivity check — `/api/health` returns whether Redis is wired up. |
 | `api/_redis.js`, `api/_auth.js` | Shared Redis client + auth helpers (scrypt password hashing, session tokens). |
 | `cs-logo.png` | The Codestarters brand mark. |
@@ -23,8 +26,9 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 
 1. Anyone can **create an account** (username + password) in the portal. Passwords are hashed with scrypt; sessions are random tokens stored in Redis and kept in the browser's `localStorage`.
 2. The **first account created is the owner/admin** (claimed atomically). The owner sees an **Owner dashboard** with every account and every submission.
-3. Logged-in users **publish projects** → saved to the Redis list `cs:projects`. The author is the account username (no email is ever collected).
+3. Logged-in users **publish projects** → each project is stored under its own `project:<id>` key, with the id pushed onto the `cs:projects` index list. The author is the account username (no email is ever collected).
 4. The public **Showcase** on the home page renders every published project, newest first.
+5. **Edit / delete:** a user can edit or delete their own submissions (from "Your submissions" in the portal, or via the controls on cards they own). The **owner/admin can edit or delete any** submission, and the Owner dashboard shows every submission in full.
 
 ### Redis keys
 
@@ -35,7 +39,8 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 | `user:byname:<lower>` | string | Username → id (uniqueness + login lookup). |
 | `users:all` | list | All account ids. |
 | `sess:<token>` | string (TTL 30d) | Session token → account id. |
-| `cs:projects` | list | Published projects (newest first, capped at 500). |
+| `project:<id>` | json | A single submission (editable/deletable on its own). |
+| `cs:projects` | list | Index of project ids (newest first, capped at 500). |
 
 ---
 

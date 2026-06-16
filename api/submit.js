@@ -40,8 +40,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid category.' });
   }
 
+  const id = newId();
   const record = {
-    id: newId(),
+    id,
     name: user.username,   // author is the signed-in account
     userId: user.id,
     title, category, writeup,
@@ -50,11 +51,12 @@ export default async function handler(req, res) {
   };
 
   try {
-    await redis.lpush(PROJECTS_KEY, record); // newest first
+    await redis.set('project:' + id, record);   // the record lives in its own key (editable/deletable)
+    await redis.lpush(PROJECTS_KEY, id);         // the list just holds ids, newest first
     await redis.ltrim(PROJECTS_KEY, 0, MAX - 1);
   } catch (err) {
     return res.status(500).json({ error: 'Could not save your project. Please try again.' });
   }
 
-  return res.status(200).json({ ok: true, id: record.id });
+  return res.status(200).json({ ok: true, id });
 }
