@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Codestarters AI Bootcamp</title>
 <meta name="description" content="Codestarters AI Bootcamp — a 7-day hands-on program where students go from 'AI is magic' to shipping their own AI apps, agents, and automations. Sponsored by TrueFoundry." />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23000000'/%3E%3Crect x='3' y='3' width='94' height='94' rx='20' fill='none' stroke='%23333' stroke-width='2'/%3E%3Ctext x='50' y='71' font-size='62' font-weight='700' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="icon" type="image/png" href="/cs-logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -93,8 +93,9 @@
   .logo .mark {
     width: 26px; height: 26px; border-radius: 6px;
     background: #ffffff; color: #000000;
-    display: grid; place-items: center; font-size: 14px; font-weight: 700;
+    display: grid; place-items: center; font-size: 14px; font-weight: 700; overflow: hidden;
   }
+  .mark img { width: 72%; height: 72%; object-fit: contain; display: block; }
   .nav-links { display: flex; align-items: center; gap: 28px; }
   .nav-links a { font-size: 14px; color: var(--muted); font-weight: 400; transition: color .15s; }
   .nav-links a:hover { color: var(--text); }
@@ -241,6 +242,22 @@
   .step h4 { font-size: 16px; font-weight: 600; margin: 12px 0 8px; }
   .step p { color: var(--muted); font-size: 13.5px; line-height: 1.55; }
 
+  /* ---------- SHOWCASE ---------- */
+  .showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .showcase-empty { grid-column: 1 / -1; text-align: center; color: var(--faint); font-size: 14.5px; padding: 48px 20px; border: 1px dashed var(--border); border-radius: var(--radius); }
+  .proj { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; transition: border-color .2s ease, background .2s ease; }
+  .proj:hover { border-color: var(--border-strong); background: #0f0f0f; }
+  .proj-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .proj h3 { font-size: 16.5px; font-weight: 600; letter-spacing: -0.01em; }
+  .proj-cat { flex-shrink: 0; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--panel-2); white-space: nowrap; }
+  .proj .by { font-size: 13px; color: var(--faint); margin-bottom: 12px; }
+  .proj .by b { color: var(--muted); font-weight: 500; }
+  .proj p.desc { color: var(--muted); font-size: 14px; line-height: 1.55; flex: 1; }
+  .proj-links { display: flex; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .proj-links a { font-size: 13.5px; font-weight: 500; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
+  .proj-links a:hover { color: #fff; }
+  .proj-links a svg { width: 14px; height: 14px; }
+
   /* ---------- PORTAL / LOGIN ---------- */
   .login-card { max-width: 420px; margin: 0 auto; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 32px; }
   .login-card h2 { font-size: 21px; font-weight: 600; text-align: center; }
@@ -253,7 +270,7 @@
   .login-err { color: var(--red); font-size: 13.5px; text-align: center; margin-top: 14px; min-height: 18px; }
   .login-lock { width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center; font-size: 26px; margin: 0 auto 16px; background: var(--panel-2); border: 1px solid var(--border); }
   .login-brand { display: flex; align-items: center; justify-content: center; gap: 9px; font-weight: 600; font-size: 18px; letter-spacing: -0.02em; margin-bottom: 18px; }
-  .login-brand .mark { width: 28px; height: 28px; border-radius: 6px; background: #ffffff; color: #000000; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+  .login-brand .mark { width: 28px; height: 28px; border-radius: 6px; background: #ffffff; color: #000000; display: grid; place-items: center; font-size: 15px; font-weight: 700; overflow: hidden; }
   .portal-brandbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 22px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
   .portal-brandbar-tag { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--faint); padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px; background: var(--panel); }
 
@@ -333,12 +350,12 @@
 <!-- NAV -->
 <header class="nav">
   <div class="nav-inner">
-    <a href="https://codestarters.com" target="_blank" rel="noopener" class="logo" title="Codestarters home"><span class="mark">C</span> Codestarters</a>
+    <a href="https://codestarters.org" target="_blank" rel="noopener" class="logo" title="Codestarters home"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</a>
     <nav class="nav-links" id="navLinks">
       <a href="#curriculum">Curriculum</a>
-      <a href="#team">Team</a>
       <a href="#challenge">Summer Challenge</a>
-      <a href="#certificate">Certificates</a>
+      <a href="#showcase">Showcase</a>
+      <a href="#team">Team</a>
     </nav>
     <div class="nav-cta">
       <a href="#portal" class="btn btn-primary" style="padding:11px 20px; font-size:14px;">Portal →</a>
@@ -493,6 +510,20 @@
   </div>
 </section>
 
+<!-- SHOWCASE -->
+<section class="pad-sm" id="showcase">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Live · Project Showcase</span>
+      <h2>Built by <span class="gradient-text">Codestarters students.</span></h2>
+      <p>Every project published from the student portal appears here, newest first. Yours could be next.</p>
+    </div>
+    <div id="showcaseGrid" class="showcase-grid">
+      <div class="showcase-empty" id="showcaseEmpty">Loading projects…</div>
+    </div>
+  </div>
+</section>
+
 <!-- CERTIFICATE -->
 <section class="pad" id="certificate">
   <div class="wrap">
@@ -547,7 +578,7 @@
 
     <!-- Login -->
     <div class="login-card reveal" id="loginCard">
-      <div class="login-brand"><span class="mark">C</span> Codestarters</div>
+      <div class="login-brand"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</div>
       <h2>Member sign in</h2>
       <p class="sub">Use the credentials shared with your cohort.</p>
       <form id="loginForm" autocomplete="off">
@@ -573,15 +604,15 @@
 <footer>
   <div class="wrap foot-inner">
     <div>
-      <a href="https://codestarters.com" target="_blank" rel="noopener" class="logo" style="font-size:16px;" title="Codestarters home"><span class="mark" style="width:28px;height:28px;font-size:15px;">C</span> Codestarters</a>
-      <p style="margin-top:10px;">Codestarters AI Bootcamp · <a href="https://codestarters.com" style="color:var(--text)">codestarters.com</a> · Sponsored by TrueFoundry</p>
+      <a href="https://codestarters.org" target="_blank" rel="noopener" class="logo" style="font-size:16px;" title="Codestarters home"><span class="mark" style="width:28px;height:28px;font-size:15px;"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</a>
+      <p style="margin-top:10px;">Codestarters AI Bootcamp · <a href="https://codestarters.org" style="color:var(--text)">codestarters.org</a> · Sponsored by TrueFoundry</p>
     </div>
     <div class="foot-links">
       <a href="#curriculum">Curriculum</a>
-      <a href="#team">Team</a>
       <a href="#challenge">Summer Challenge</a>
-      <a href="#certificate">Certificates</a>
-      <a href="https://codestarters.com">codestarters.com</a>
+      <a href="#showcase">Showcase</a>
+      <a href="#team">Team</a>
+      <a href="https://codestarters.org">codestarters.org</a>
     </div>
   </div>
 </footer>
@@ -700,7 +731,7 @@
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
   // ---- Encrypted portal (AES-GCM, key derived from username:password via PBKDF2) ----
-  const VAULT = {"salt":"AE80Br9yYzVmLUfAxufZNQ==","iv":"eTD0bxOTZYUeoBB3","iter":250000,"ct":"iiSQ9It9LqBBqn76IBbsOJVc0lmgDsXa/Kf4XRG4G0EdbLNN2z7wkgbYlp6QQt8vaOfpMFk52d2OCEuL1z+kyID0YWvgH90B07fE0IuRAHybHPQj1Px6RblcBkpA3jjC4iSY5DgZW4d0PB/2JqDXJnYFr7Fz4VTEP6TSqJ4on9/J38yBpjQMSofXrVH9cig4sZ179ttWmQzQuD/pge4DOgN3Y+4O5dOjbi7fiiGfM5ZVl1AgUp93AyXV5KZaTzevYBUXgkZPxKJ9DJUj5abLW9eyCG2qrg0niiPwyc5A1C+l1Uaz7BN0p/45OhH3eX5+rnxjIEnl8MBSiMaC+ngLxCoeFI3Ub9HfwrWy+Ro4OxW6v8waDxclO3dsy067rvrhxdIu0+ctdrppTepXuNgKJciH+R+JIV9PJ8GG+65FOIrFX88aAVw1+BNyoLSVoQ041fV02UcV03uGmgc7pZmuhdxD1/GVkEcWDZQGcYNfceiM/o/7/L8j6Hkl/zKi5goN0IW+UcEfMoVp71tMTLje1GvmXo0P00q7lSs5ru0EzkE8sXlskMGnOk6W8xo4ryipy6/bukcrw5wCUxVKDxGJHJD9YIkX0Zb42XnIwvofadhQoFlZ2skHvTxN5rHFBh2ov8yUORTlN3DL828joI5RMlx0CByUv2NmuNqQLsiCTAXg1gCwXtrR88ULDH6VHw0AKKXmCpq1WbUe/SI4JiCtt5TkgV9IanHhVLCVUffcITCjOdemLhSO0cAP/Fvc1LvC8A7sBoubi8HNeh83L08CJSk6FraiVUuiDtlxdYJHjaarBsLGgC/QWPQI0lpYcWZUSHQgQKlRAwcuhK9RK0STWJf0BblMlepBmz2rHyMsWBCYZA7jv7oXaLLqwornOS1JyKuGS/1zevxCMqxdGjbXsHNuSLm1jjqnLauvSvH4ok8a3SsaxOCpiIvggErMcVEhM8p/nP8xyqe1uKNQGpWodUmIfTcFK3Q/6IEwDUNdtaHt7nLSGRCDnGX9a6euBIL9/CAkEj29G7RjuaB9PJu3HKxQhk8+evs+zW5NODllz7iO4jEgMHKZbARWjH0pZ2CjWrmRMxGcsPJLRQV1jYFMb8vvu8g0Q88dNoung+dBiGy4lja+i/HqrK1+xobzXQMh/T2vy6wpYuxvjM1jnfs0HNX+e954mKqCGpo49AQ0H1oY8MXrMwKKI0j4cl8G1/hT3xhoGJ/bPsC+Jd4fMijLBaIF7zdq7EoAeJ6xAkEfFQ2ckdC7BMTNjrXrIAuII0pQNNKy/qH4V3+WBbNlqIQ845pdV/bctsgOWDhzW1r6x+O8MwEEacN6ytajK8K2XmxjdGEUfyRghDMJt66S8tADxVWLy2GEqzoiTqyU2+/qgv6gX+ZjD68IW9lFGqPVfEn2RTwDHPVGMePljWe5JqeX098/WzRpD9HicnawnqiUaFXy406F2oLsQIhVO0cF4ZdN1/Z1Opg5yG33HTdXgUkbcC50vHtEZgEh4d2peaRSWvNwNAEgh9EfOqovcWbDdCesWnfMixBL29HNL2Cd+DAdMfc8nej60FSWdOuGcEO5hdLH5TT4u0wJAqnkv58F5DgsjIv9meVYps6V8baG0+eE3phXsqwOZ9fqfKIi7D0q/J3A9oLOhSKio2/o8xycQ9c4i+gjxcrFrRdn2wz0/0zCxMekRVpuwnvXM9WAhZEKLVtI6UUGmVPsT9QVHEOMeCWku96kkMQDRY85KNKW6zahLllkff794FpPk52cUk0eWd9SWad5aC0nA9LTyQi0mecb8j1XFOMrXzUhFVte9ZtkWpvLKrLG1DOFtQG3w8tjofvJiy+ZSJv/R9nIqFQAfQEAaBrEx5+UTScIGDqKO/Vsu1LYlFIBL8CAa+iCV8jra66JdOms/R0YrtMl76/M2n/rE2XraFJ96c6ZgiAtHtl97MRUCLrrVPYMk91L45wLqHbJJ0HU/3Qr8jcnZnZ3k9s0ZyXMNL4ucgNV8AdIEZZYsoU064xcmbTLdmE6IkwHI0WOB7+6sq3sr0ZilDvRKm6zRHAnRD++qLnii+U6PcsFz3iSyCsTQwquFPKxoNj0cbKeWzLi89TM/ARnUSIJzkYh/BilhhiPNnvtgo11SmH8YXL4U1XCHcoiE+s2keGzyOQjPGxZXoH/zMkTRPjaRUsv1T9eij1z1b26Zm8EEaSXNJ0Zj3fzs3xeC+NFfxiW8rJkVMEGYrdkSb+0/+OtAhjzE39djcZ3saV7loPmdh/Vp4UlRs/2neqR4mASUpgIAmThLfxRb/YgaMYewVx+jt6huXkneuv+6vDFeLK1L6RynOxOvWURhJrLmWpzjXpdQjPSiFDrkj1VeIxe6z0r2tWmEtWOLNiYA5nAf0Tiz/nLjbcWhT/wLn7Y0uUcVYOAWpv+gV+NTAe9nyPP2DeojmEyJOyYmzsUHZwQK+C3sIY984DEbC7Nktm/T85pZSXOrZSkT4bEGTxzAK96hK+J4GXeOwOOwkb/NZ2veF5W05Kj9gHlgdTSd0Pd3FvLTpdqFMQVo8a/0OiJyIWj0gaJNIihQSl3fJuXwOY5v8wFq/HYn8zAotnt8HAFUwl0GaNMm8QTDNJs245y+MIlD7Zuv0CXwM4O176C8CdgkfQ9lfRw4IoK+A6SFzFxr+Mlrmz8HihV/PoY0e9l1cl8pFU1HOx56XiJKbJtgCJrDbfFjZazG1ra7F2vQ/R6FHAny8vLcDYLLSJdYdxJR5y28wgzdN+pHuVOoABc1BDl9lWDh4IEk1HTaGERKj5xJEhUUKt9cz1H+SRo5PWrKpcvlD5A9hZ6qRMvnl3irm3viYEsBh9cBO35yFOEiXZ4H93AI15KJspInzZX53Omo/Gi5q57LdmgtMM63Mx70kxsCw9zUlm92QQBoGCkX4/gs6h4T/SbPuclEPC0jvTWq2M4q1Q+wxUWNTsQACrbRwxydE8rehBu9Z3J3nlORS0T/4fZeTD5gv3gcERHZDOk+S05VfYHeCdQsEY9hZOo+5yBEhmJdB+sOxz5pg6B4rLJenB9hlYwZyR0XnS3226lcpeYrz0XGiBHE4AcAK7J/3wsY4CaOkSbwiewHMR45MrG7qgyiw9HSE/P1kooX6vawlDz5+7SMPs1rBhtz8eY9zPM76AjYuWn9tzp66nH79XYpMED1Ivpnkqfeucyx8voI/sTLdYnBZ9eSga/txZecvuBzt+vvNL6rq+3a5nCaCccTIqp1+OoSFmbqttBrYxh8Gc9U8Elm4Pv3ak0Ii4pThAngGMhGMt2XV78ObDoQqHc7w/nVnaiUX8u+jKG6FDFKoUX78XbOhbnXV7GBBGEDVXc2wwHnJjkiXpE2MRJIg6R5SgZ+PE06MoaouMJT/7BIXHSr/QBTVkJb5dGKRTKMF+cDhIl4geJY+naQdu2+I+PA2wGwirp0zxXkzEMZBb0kl3CsJrTHPZONBTVvXKcbrWqH9kn5P87tLwQP5g9hMOoYZrO0R4CsmSHQdiVLjQXI97l7KIPwiqLjjEnA/ONnswn8qm2Cdkz2v9S8GBv3U/HmCHOzsQYDDqXjpNAWzImeEiTvHu6/0XyxaRTjPeOpk0fLxqp8JfzcjrdVppVOnvOEjUisYcLWOtnoHbikp9bgm2OJ1Imtya71HOf4WluqSZxVTNM+Cm7eSHDNEcVyhOXwsXszqdlEfkH1dD2mQn9yq0t+jfYcR7mRsMd97Hy6St7UoPEldgM6TbVf1MyYjTmva+TmOXBEcN3kQWj9iPwSuTTi1JNjI+j62FS4YXEspQiaTYq7A3y8gd2ofyfVp3L1pLetN8rFjs0RtcjEQ6vyggWMlPfkIOHAh3IIiURLJBi7aKD6fwMdXMK+vBNrlRL5hGADJMkP9ZG9ew6Xy7BInQMa1lIFHvwzAlvtZe1VUpFApa8w917pEEM7JlyDKCDMgSX6Aarqfv0WwIw1NDU6JmdMa5nCC3TH9YSddO9+G9ipUIj6QtdmMgOD0JymCwZZHMIr1LIwVwFeI2GZ1QrMld1/XC8BXRFalvEbH1Lhm9lCoAeQi1CPvp8iUFzlL0ewKNu9ilsqJ61N618ykgDd855zwGmkJ3k3qH6Lhy3lJKzOeHyGvHA2jHhLOL/HIAuwz0D3k5fMIJufQpVGsQ08vyBPHna4Wxtt5zThF3VDwox1F9pIQ1FlsRhqti/3f1XBgQcznFjL0lLFmTdyhfkc4/NQemR66TunIeuv8ysqsuYPSqlAJYN7rUf2eoLir9fdc7YcOr1DzToo0a/7rXw1B52qgFwGZqwGCNVn9QEZRUS95ZDG3ZmvzsNkXpxdUzf/qr/8rG/lb0Vf92xWcHvtyixDKGQCcoQ6hSk/scqwLZpBeILTGahrZkuwbkJqXS0cHrdg/Uq/GjDGrce5/R6bFjbs1+HoZnnfdBj6MawKFzabA2gR0zkoq3j6TgLxIFE0249LPJU8WdmJwOrkNcWLjrJx9Kysmjpibq3ImulzhUpXVB/ExZNi4wm4p8nDXiECpbgjgcaVATOYSZO8dT4FOfCMmwZt57u4gH+e0hT2fJq0P6hbkeh6vZk5zCbyMS7DKGxReaX1p6xCUJr/V6tNeLFKaMlFwKPBtvaPgW5J1YLVFok49RFvC6avv+aqDyqvWhw8ZyuS5Vru/UwdTN3w/6wFyjrS3mM1aA0Cxy/yKPiKC8tbkvqv3J+FRM/fprEE/mbmgPwav7LIXkLb5m37PGraeY1q2j43+3V9tW1mtutbNVzl01P/owXCe5hmMQcYcV/N0e060A13zCuHVYi93gTJcKIrVsPrRWFWSGHXIibWEzykFkkOsJXqBgjCZpfiBN34VN+Cdi4hmoDCFAxTZihoQen6F5i8INMmcWOzZZAk/TT9iSXLsx60hL89k9jSX6lHM4/OMWdJk2bviJTbeSmEI1TmOgjd8rGTamFgNVXycSLvi9bCRMT5AIKN8SYzy4pFPcksegp5hn2OJnYY9RA32PTjoCxe/CQey2PUMH2zbj59FuVsrtDqrbHmUolpfyM1AKtjkQnWbspYIDEnyG91uRUNvQFX4QlXzmAuDQVYEcCj7FlRaAFR/Rni8H3mjOIzBQoR9Q202bHmugu3ATE2hSOPkMYp1Tqg1PsUS3c8yjbMKz/IGHs39no6cWrWimRarQtm/9c+1Wwb2yi4bBI5m8v1iKM5rFItrsNi+tPH4oYRM3sOhTzNKaxbsM/Bl9jGOK8+B99W0J99MLVGSATX5fxdYKqUHLqqlWRL6iP/f3gVxBpbygMmQ775fIKME12eWfhaawaPJLZYhaglPuGV8zAxuPzawzA2ZgwCJT9ZgSnMreQecFejrONc241OHYN0K/a2memQHTSKDeRbq0e3n6ObDbGu0Lt9j1pGbjeXxADRniRmfaT8b2zvcwUeuKgrRrRr1BzacmmeehpKAPcvunypoZyBp50tUIR7jnpoO1XMlaYXW6zPqB6OSu8eX9cHPZx75tPNK811Mt7gIiDIcN1/q8e/G5oXTCZpnWY37WZ8SyCj1xDCn32J2FKf6MvqZ+WSczYzsjio5/tC4iKYJCFTkoII7PqsHjSrwO6rXkQDSSZ8o8xyEVrm7SQHOfpH7IBq6jd6XoKaUVklS0MWqIiHGQ7DvY2Hs3uWRiTbFDv5hpu9GsorlNGjQ1fmmynYH0uLuclPxYb6Dp6SRjIPppjh0u0DD9YJO0L80aP2vek8qyiACDrXn4m9f2UjiddQ130Fp7U9p9veDDiAVseZouU/a+4k88fm0Ta0f8FXgayEbQaWYFJGhxHchGVhr2Ecx7OhIOTd70F7e9rvc2CdgLKhFxMNdXlfyfur2/ZUcLpVcrmO3S1TB7tc3Utdn97S+Eacnq9ZB0tnX0MhEWvldbZd2HUIQdZBbXh/SPrGHPJ3tEF3Lg2CeI17UuA1qzb8uApjrKx0uE9Fxqvew2eqns3oqUXRmaXim/NtOjawdT56UtMiTBftOo7VZDPUi/upMVhHIxUlTTzhZX/1IYCli5VQP3cqSWtgGaUg0YplxES/1fPizWGWN9CbjJDYpKOkzLCUj4SWkBQaQ7k+FhkIOeF9+eLuIGQ6F7NWzV9uKUOeRj0tvsmePrPqkvrJYJrDxDXMkH0OhJuYTHlOhrOIIVxlc6Z08FEkKvZEU1Nl+9GYcOqiqULIKdPrXZHHM99HOu2CxAHZBj3yzb44u3RDXNgaFxtDW38yaSN9QaY1WpL46ZMbRVj+vk7Tw/GjGGQYG4y4L8ScZIHon1fWFcDCKBwNqJ/+MqJh4u/Yz3DCNwk1UyT9Hfyygb2+z3t5VeSC/sZxz8gvxri+8i2olDe73KYmuA+/wnwmFmwdNWpKAc7NRsxW6ta5QPB693ifkViPdQlSFkkU8nt4qAgKjUIt2SkefG7y7ziSOqIbw=="};
+  const VAULT = {"salt":"scj/mwlc67hIz81bv1+rdg==","iv":"nBDWpXj3npWhwIlt","iter":250000,"ct":"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"};
 
   const b64ToU8 = (b) => Uint8Array.from(atob(b), c => c.charCodeAt(0));
   const SS_KEY = 'cs_portal_unlocked';
@@ -729,7 +760,7 @@
     wireSubmitForm();
   }
 
-  // ---- Project submission (posts to FormSubmit relay; endpoint lives in encrypted portal) ----
+  // ---- Project submission (publishes to the Redis-backed showcase via /api/submit) ----
   function wireSubmitForm() {
     const form = document.getElementById('submitForm');
     if (!form) return;
@@ -740,31 +771,70 @@
       msg.className = 'submit-msg';
       if (form._honey && form._honey.value) return; // spam bot
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      btn.textContent = 'Submitting…'; btn.style.opacity = .7;
+      btn.textContent = 'Publishing…'; btn.style.opacity = .7;
       try {
-        const res = await fetch(form.action, {
+        const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
         });
         const data = await res.json().catch(() => ({}));
-        if (res.ok && (data.success === 'true' || data.success === true)) {
+        if (res.ok && data.ok) {
           form.reset();
           msg.className = 'submit-msg ok';
-          msg.textContent = '✓ Submitted! We’ll review it and be in touch. Thanks for building.';
-          btn.textContent = 'Submit another →';
+          msg.textContent = '✓ Published! Your project is now live in the showcase.';
+          btn.textContent = 'Publish another →';
+          loadShowcase(); // refresh the public gallery
         } else {
-          throw new Error(data.message || 'Submission failed');
+          throw new Error(data.error || 'Submission failed');
         }
       } catch (err) {
         msg.className = 'submit-msg err';
-        msg.textContent = 'Couldn’t submit right now. Please email your project to the team, or try again.';
-        btn.textContent = 'Submit project →';
+        msg.textContent = (err && err.message) ? err.message : 'Could not publish right now. Please try again.';
+        btn.textContent = 'Publish project →';
       } finally {
         btn.style.opacity = 1;
       }
     });
   }
+
+  // ---- Public showcase: load published projects from the database ----
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const safeUrl = (u) => { try { const x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : ''; } catch { return ''; } };
+  const ICON_LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
+  const ICON_GH = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>';
+
+  function projectCard(p) {
+    const live = safeUrl(p.projectLink), gh = safeUrl(p.githubLink);
+    let links = '';
+    if (live) links += `<a href="${esc(live)}" target="_blank" rel="noopener">${ICON_LINK} Live</a>`;
+    if (gh) links += `<a href="${esc(gh)}" target="_blank" rel="noopener">${ICON_GH} Code</a>`;
+    return `<article class="proj">
+      <div class="proj-top"><h3>${esc(p.title)}</h3><span class="proj-cat">${esc(p.category)}</span></div>
+      ${p.name ? `<div class="by">by <b>${esc(p.name)}</b></div>` : ''}
+      <p class="desc">${esc(p.writeup)}</p>
+      ${links ? `<div class="proj-links">${links}</div>` : ''}
+    </article>`;
+  }
+
+  async function loadShowcase() {
+    const grid = document.getElementById('showcaseGrid');
+    const empty = document.getElementById('showcaseEmpty');
+    if (!grid) return;
+    try {
+      const res = await fetch('/api/projects', { headers: { 'Accept': 'application/json' } });
+      const data = await res.json().catch(() => ({}));
+      const projects = Array.isArray(data.projects) ? data.projects : [];
+      if (!projects.length) {
+        grid.innerHTML = '<div class="showcase-empty">No projects published yet — be the first to ship something this summer.</div>';
+        return;
+      }
+      grid.innerHTML = projects.map(projectCard).join('');
+    } catch (err) {
+      grid.innerHTML = '<div class="showcase-empty">Showcase is warming up. Check back shortly.</div>';
+    }
+  }
+  loadShowcase();
 
   const loginForm = document.getElementById('loginForm');
   const loginErr = document.getElementById('loginErr');

@@ -1,0 +1,10 @@
+{
+  "name": "codestarters-ai-bootcamp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Codestarters AI Bootcamp site + project showcase API (Vercel + Upstash Redis)",
+  "dependencies": {
+    "@upstash/redis": "^1.34.3"
+  }
+}

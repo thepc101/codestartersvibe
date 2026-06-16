@@ -4,6 +4,14 @@ encrypt.mjs
 # OS / editor cruft
 .DS_Store
 
+# dependencies (Vercel installs these on deploy)
+node_modules/
+
+# local env / secrets
+.env
+.env*.local
+.vercel
+
 # local preview helper
 serve.cjs
 .claude/
