@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portal — Codestarters AI Bootcamp</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" href="/cs-logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo" title="Codestarters AI Bootcamp"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</a>
+    <a href="/" class="portal-back">← Back to site</a>
+  </div>
+</header>
+
+<section class="portal-page">
+  <div class="wrap">
+    <div class="section-head" id="portalIntro" style="margin-bottom:40px;">
+      <span class="eyebrow"><span class="dot"></span> Student Portal</span>
+      <h2>Your <span class="gradient-text">Codestarters account.</span></h2>
+      <p>Create an account to publish projects to the Showcase and access cohort materials.</p>
+    </div>
+
+    <!-- Auth: log in / create account -->
+    <div class="login-card" id="authCard">
+      <div class="login-brand"><span class="mark"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" type="button">Log in</button>
+        <button class="auth-tab" id="tabSignup" type="button">Create account</button>
+      </div>
+      <form id="authForm" autocomplete="off">
+        <div class="sf-row" id="nameRow" style="display:none;">
+          <div class="sf-field"><label>First name</label><input id="aFirst" name="firstName" type="text" placeholder="Optional" autocomplete="given-name" /></div>
+          <div class="sf-field"><label>Last name</label><input id="aLast" name="lastName" type="text" placeholder="Optional" autocomplete="family-name" /></div>
+        </div>
+        <div class="field">
+          <label for="aUser">Username</label>
+          <input id="aUser" name="username" type="text" placeholder="Pick a username" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="aPass">Password</label>
+          <input id="aPass" name="password" type="password" placeholder="Your password" autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="authBtn">Log in →</button>
+        <div class="login-err" id="authErr"></div>
+      </form>
+      <p class="auth-hint" id="authHint">New here? <a href="#" id="switchAuth">Create an account</a>.</p>
+    </div>
+
+    <!-- Dashboard (shown after sign-in) -->
+    <div id="portalContent" style="display:none;">
+      <div class="portal-brandbar">
+        <span class="logo" style="font-size:16px;"><span class="mark" style="width:28px;height:28px;"><img src="/cs-logo.png" alt="Codestarters" /></span> Codestarters AI Bootcamp</span>
+        <span class="portal-brandbar-tag" id="meTag">Student Portal</span>
+      </div>
+      <div class="portal-head">
+        <div>
+          <span class="eyebrow"><span class="dot"></span> Signed in as <b id="meName">—</b></span>
+          <h2 style="margin-top:14px;" id="meGreeting">Welcome, builder.</h2>
+          <p style="color:var(--muted); margin-top:8px;">Publish your projects and grab everything you need for the Summer Challenge.</p>
+        </div>
+        <button class="btn btn-ghost" id="logoutBtn" style="height:38px; padding:0 16px; font-size:14px;">Log out</button>
+      </div>
+
+      <div class="portal-grid">
+        <a class="portal-card" href="#submit"><h3>Publish a Project</h3><p>Push your build live to the public Showcase — link, repo, write-up.</p><span class="pc-go">Publish →</span></a>
+        <a class="portal-card" href="https://discord.gg/uTjX3P4bZJ" target="_blank" rel="noopener"><h3>Discord Community</h3><p>Mentor help and your cohort — all summer long.</p><span class="pc-go">Join →</span></a>
+        <a class="portal-card" href="/#showcase"><h3>The Showcase</h3><p>See everything published by the cohort, newest first.</p><span class="pc-go">View →</span></a>
+      </div>
+
+      <h3 class="portal-sub">Daily materials</h3>
+      <div class="portal-days">
+        <a class="pday" href="#"><b>Day 1</b><span>AI Is Actually Insane</span></a>
+        <a class="pday" href="#"><b>Day 2</b><span>I Can Build Software</span></a>
+        <a class="pday" href="#"><b>Day 3</b><span>AI Can Do Work For Me</span></a>
+        <a class="pday" href="#"><b>Day 4</b><span>AI Can Take Actions</span></a>
+        <a class="pday" href="#"><b>Day 5</b><span>Build Your Own Agent</span></a>
+        <a class="pday" href="#"><b>Day 6</b><span>How Real AI Products Work</span></a>
+        <a class="pday" href="#"><b>Day 7</b><span>Your Journey Starts Here</span></a>
+      </div>
+
+      <h3 class="portal-sub">Tools &amp; accounts cheat sheet</h3>
+      <div class="portal-tools">
+        <span class="ptool">ChatGPT</span><span class="ptool">Claude</span><span class="ptool">Gemini</span>
+        <span class="ptool">Cursor</span><span class="ptool">Lovable</span><span class="ptool">Bolt</span><span class="ptool">Replit</span>
+        <span class="ptool">OpenClaw</span><span class="ptool">Hermes</span><span class="ptool">Featherless AI</span><span class="ptool">Docker</span>
+      </div>
+
+      <h3 class="portal-sub" id="submitHead">Publish your project</h3>
+      <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;" id="submitIntro">Built something this summer? Publish it and it goes live in the public Showcase instantly under your account.</p>
+      <p id="editNote" style="display:none; color:var(--text); font-size:14px; margin-bottom:18px;">Editing an existing project. <a href="#" id="cancelEdit" style="color:var(--text); text-decoration:underline;">Cancel and publish a new one instead</a>.</p>
+      <form id="submitForm" class="submit-form" novalidate>
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+        <div class="sf-row">
+          <div class="sf-field"><label>Project title *</label><input name="project_title" required placeholder="What's it called?" /></div>
+          <div class="sf-field"><label>Category *</label>
+            <select name="category" required>
+              <option value="">Choose a track…</option>
+              <option>AI App</option><option>AI Agent</option><option>AI Automation</option><option>Startup Idea</option>
+            </select>
+          </div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-field"><label>Live project link</label><input name="project_link" type="url" placeholder="https://…" /></div>
+          <div class="sf-field"><label>GitHub repo</label><input name="github_link" type="url" placeholder="https://github.com/…" /></div>
+        </div>
+        <div class="sf-field"><label>Screenshot / demo link</label><input name="screenshots" type="url" placeholder="Drive, Loom… (optional)" /></div>
+        <div class="sf-field"><label>Short write-up *</label><textarea name="writeup" required rows="4" placeholder="What does it do, what did you learn, what's next?"></textarea></div>
+        <button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%; justify-content:center; margin-top:8px;">Publish project →</button>
+        <div class="submit-msg" id="submitMsg"></div>
+      </form>
+
+      <h3 class="portal-sub">Your submissions</h3>
+      <div class="showcase-grid" id="mySubsGrid"><div class="showcase-empty">Loading…</div></div>
+
+      <!-- Account settings -->
+      <h3 class="portal-sub">Account settings</h3>
+      <div class="settings-grid">
+        <form id="profileForm" class="submit-form" novalidate>
+          <h4 class="set-h">Profile</h4>
+          <div class="sf-row">
+            <div class="sf-field"><label>First name</label><input id="setFirst" name="firstName" type="text" placeholder="First name" /></div>
+            <div class="sf-field"><label>Last name</label><input id="setLast" name="lastName" type="text" placeholder="Last name" /></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="profileBtn" style="width:100%; justify-content:center;">Save profile</button>
+          <div class="submit-msg" id="profileMsg"></div>
+        </form>
+        <form id="passwordForm" class="submit-form" novalidate>
+          <h4 class="set-h">Change password</h4>
+          <div class="sf-field"><label>Current password</label><input name="currentPassword" type="password" autocomplete="current-password" placeholder="Current password" /></div>
+          <div class="sf-field"><label>New password</label><input name="newPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters" /></div>
+          <button type="submit" class="btn btn-primary" id="passwordBtn" style="width:100%; justify-content:center;">Update password</button>
+          <div class="submit-msg" id="passwordMsg"></div>
+        </form>
+      </div>
+
+      <!-- Admin / owner panel -->
+      <div id="adminPanel" style="display:none;">
+        <h3 class="portal-sub">Owner dashboard</h3>
+        <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">You're the owner. Manage accounts and view every submission below.</p>
+        <div class="admin-stats" id="adminStats"></div>
+        <h4 class="admin-h">Accounts</h4>
+        <div class="admin-bulk"><button type="button" class="pbtn danger" id="deacAllBtn">Deactivate all students</button></div>
+        <div class="admin-table" id="adminUsers"><div class="aempty">Loading…</div></div>
+        <h4 class="admin-h">Every submission</h4>
+        <div class="showcase-grid" id="adminProjects"><div class="showcase-empty">Loading…</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="/app.js"></script>
+<script>
+  // ---- Enter the dashboard ----
+  let submitWired = false;
+  function displayName(u) { return (u.name && u.name.trim()) ? u.name : (u.firstName || u.username); }
+  function enterPortal(user) {
+    me = user;
+    document.getElementById('authCard').style.display = 'none';
+    document.getElementById('portalIntro').style.display = 'none';
+    document.getElementById('portalContent').style.display = 'block';
+    document.getElementById('meName').textContent = user.username;
+    document.getElementById('meGreeting').textContent = 'Welcome, ' + displayName(user) + '.';
+    document.getElementById('setFirst').value = user.firstName || '';
+    document.getElementById('setLast').value = user.lastName || '';
+    const adminPanel = document.getElementById('adminPanel');
+    if (user.role === 'admin') {
+      document.getElementById('meTag').textContent = 'Owner';
+      adminPanel.style.display = 'block';
+      loadAdmin();
+    } else {
+      adminPanel.style.display = 'none';
+    }
+    wireSubmitForm();
+    loadMine();
+  }
+
+  // ---- Auth (log in / create account) ----
+  let authMode = 'login';
+  const authForm = document.getElementById('authForm');
+  const authErr = document.getElementById('authErr');
+  const authBtn = document.getElementById('authBtn');
+  const authHint = document.getElementById('authHint');
+  function setAuthMode(m) {
+    authMode = m;
+    document.getElementById('tabLogin').classList.toggle('active', m === 'login');
+    document.getElementById('tabSignup').classList.toggle('active', m === 'signup');
+    document.getElementById('nameRow').style.display = (m === 'signup') ? 'grid' : 'none';
+    authBtn.textContent = (m === 'login' ? 'Log in →' : 'Create account →');
+    document.getElementById('aPass').setAttribute('autocomplete', m === 'login' ? 'current-password' : 'new-password');
+    document.getElementById('aPass').placeholder = (m === 'login' ? 'Your password' : 'At least 8 characters');
+    authHint.innerHTML = (m === 'login') ? 'New here? <a href="#" id="switchAuth">Create an account</a>.' : 'Already have an account? <a href="#" id="switchAuth">Log in</a>.';
+    document.getElementById('switchAuth').addEventListener('click', (e) => { e.preventDefault(); setAuthMode(m === 'login' ? 'signup' : 'login'); });
+    authErr.textContent = '';
+  }
+  document.getElementById('tabLogin').addEventListener('click', () => setAuthMode('login'));
+  document.getElementById('tabSignup').addEventListener('click', () => setAuthMode('signup'));
+  document.getElementById('switchAuth').addEventListener('click', (e) => { e.preventDefault(); setAuthMode('signup'); });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authErr.textContent = '';
+    const username = document.getElementById('aUser').value.trim();
+    const password = document.getElementById('aPass').value;
+    if (!username || !password) { authErr.textContent = 'Enter a username and password.'; return; }
+    const body = { username, password };
+    if (authMode === 'signup') { body.firstName = document.getElementById('aFirst').value.trim(); body.lastName = document.getElementById('aLast').value.trim(); }
+    authBtn.disabled = true; const orig = authBtn.textContent;
+    authBtn.textContent = (authMode === 'login' ? 'Logging in…' : 'Creating…');
+    const { ok, data } = await api(authMode === 'login' ? '/api/login' : '/api/signup', { method: 'POST', body });
+    authBtn.disabled = false; authBtn.textContent = orig;
+    if (ok && data.token) { setTok(data.token); enterPortal(data.user); }
+    else { authErr.textContent = data.error || 'Something went wrong. Please try again.'; }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try { await api('/api/logout', { method: 'POST', auth: true }); } catch {}
+    clearTok();
+    location.reload();
+  });
+
+  // ---- Publish / edit ----
+  let editingId = null;
+  function refreshLists() { loadMine(); if (me && me.role === 'admin') loadAdmin(); }
+  function startEdit(p) {
+    editingId = p.id;
+    const f = document.getElementById('submitForm');
+    f.project_title.value = p.title || ''; f.category.value = p.category || '';
+    f.project_link.value = p.projectLink || ''; f.github_link.value = p.githubLink || '';
+    f.screenshots.value = p.screenshots || ''; f.writeup.value = p.writeup || '';
+    document.getElementById('submitHead').textContent = 'Edit your project';
+    document.getElementById('submitIntro').style.display = 'none';
+    document.getElementById('editNote').style.display = 'block';
+    document.getElementById('submitBtn').textContent = 'Save changes →';
+    document.getElementById('submitMsg').textContent = '';
+    document.getElementById('submitHead').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEdit() {
+    editingId = null;
+    document.getElementById('submitForm').reset();
+    document.getElementById('submitHead').textContent = 'Publish your project';
+    document.getElementById('submitIntro').style.display = 'block';
+    document.getElementById('editNote').style.display = 'none';
+    document.getElementById('submitBtn').textContent = 'Publish project →';
+    document.getElementById('submitMsg').textContent = '';
+  }
+  document.getElementById('cancelEdit').addEventListener('click', (e) => { e.preventDefault(); cancelEdit(); });
+
+  function wireSubmitForm() {
+    const form = document.getElementById('submitForm');
+    if (!form || submitWired) return;
+    submitWired = true;
+    const msg = document.getElementById('submitMsg');
+    const btn = document.getElementById('submitBtn');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.className = 'submit-msg';
+      if (form._honey && form._honey.value) return;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const isEdit = !!editingId;
+      btn.textContent = isEdit ? 'Saving…' : 'Publishing…'; btn.style.opacity = .7;
+      const payload = Object.fromEntries(new FormData(form).entries());
+      if (isEdit) payload.id = editingId;
+      const { ok, status, data } = await api(isEdit ? '/api/project-update' : '/api/submit', { method: 'POST', auth: true, body: payload });
+      btn.style.opacity = 1;
+      if (ok && data.ok) {
+        cancelEdit();
+        msg.className = 'submit-msg ok';
+        msg.textContent = isEdit ? '✓ Saved your changes.' : '✓ Published! Your project is now live in the showcase.';
+        refreshLists();
+      } else {
+        msg.className = 'submit-msg err';
+        msg.textContent = (status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not save. Please try again.');
+        btn.textContent = isEdit ? 'Save changes →' : 'Publish project →';
+      }
+    });
+  }
+
+  async function deleteProject(id) {
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    const { ok, status, data } = await api('/api/project-delete', { method: 'POST', auth: true, body: { id } });
+    if (ok && data.ok) { if (editingId === id) cancelEdit(); refreshLists(); }
+    else alert((status === 401) ? 'Your session expired — please log in again.' : (data.error || 'Could not delete.'));
+  }
+
+  // ---- Your submissions ----
+  async function loadMine() {
+    const grid = document.getElementById('mySubsGrid');
+    if (!grid) return;
+    const { ok, data } = await api('/api/mine', { auth: true });
+    const list = (ok && Array.isArray(data.projects)) ? data.projects : [];
+    grid.innerHTML = list.length ? list.map(projectCard).join('') : '<div class="showcase-empty">You haven’t published anything yet.</div>';
+  }
+
+  // ---- Account settings ----
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('profileMsg'); msg.className = 'submit-msg';
+    const body = { firstName: document.getElementById('setFirst').value.trim(), lastName: document.getElementById('setLast').value.trim() };
+    const { ok, data } = await api('/api/account-update', { method: 'POST', auth: true, body });
+    if (ok && data.ok) { me = data.user; document.getElementById('meGreeting').textContent = 'Welcome, ' + displayName(data.user) + '.'; msg.className = 'submit-msg ok'; msg.textContent = '✓ Profile saved.'; }
+    else { msg.className = 'submit-msg err'; msg.textContent = data.error || 'Could not save.'; }
+  });
+  document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target; const msg = document.getElementById('passwordMsg'); msg.className = 'submit-msg';
+    const body = { currentPassword: form.currentPassword.value, newPassword: form.newPassword.value };
+    if (!body.newPassword) { msg.className = 'submit-msg err'; msg.textContent = 'Enter a new password.'; return; }
+    const { ok, data } = await api('/api/account-update', { method: 'POST', auth: true, body });
+    if (ok && data.ok) { form.reset(); msg.className = 'submit-msg ok'; msg.textContent = '✓ Password updated.'; }
+    else { msg.className = 'submit-msg err'; msg.textContent = data.error || 'Could not update password.'; }
+  });
+
+  // ---- Owner dashboard ----
+  function userRow(u) {
+    const isOwner = u.role === 'admin';
+    const isMe = me && u.id === me.id;
+    const status = (u.active === false) ? '<span class="ustatus off">Deactivated</span>' : '<span class="ustatus on">Active</span>';
+    let actions = '<span class="amuted">—</span>';
+    if (!isMe && !isOwner) {
+      actions = (u.active === false)
+        ? `<button class="pbtn" data-uact="activate" data-uid="${esc(u.id)}">Reactivate</button>`
+        : `<button class="pbtn" data-uact="deactivate" data-uid="${esc(u.id)}">Deactivate</button>`;
+      actions += `<button class="pbtn danger" data-uact="delete" data-uid="${esc(u.id)}">Remove</button>`;
+    }
+    const display = (u.name && u.name.trim()) ? u.name : u.username;
+    return `<div class="urow">
+      <div class="uinfo"><span class="uname">${esc(display)}</span><span class="uhandle">@${esc(u.username)}</span></div>
+      <span class="amono">${esc(u.role)}</span>
+      ${status}
+      <span class="uactions">${actions}</span>
+    </div>`;
+  }
+  async function loadAdmin() {
+    const { ok, data } = await api('/api/admin', { auth: true });
+    if (!ok) return;
+    const users = data.users || [], projects = data.projects || [];
+    const active = users.filter(u => u.active !== false).length;
+    document.getElementById('adminStats').innerHTML =
+      `<div class="astat"><div class="an">${users.length}</div><div class="al">Accounts</div></div>` +
+      `<div class="astat"><div class="an">${active}</div><div class="al">Active</div></div>` +
+      `<div class="astat"><div class="an">${projects.length}</div><div class="al">Submissions</div></div>`;
+    document.getElementById('adminUsers').innerHTML = users.length ? users.map(userRow).join('') : '<div class="aempty">No accounts yet.</div>';
+    document.getElementById('adminProjects').innerHTML = projects.length ? projects.map(projectCard).join('') : '<div class="showcase-empty">No submissions yet.</div>';
+  }
+
+  async function handleUserAction(action, id) {
+    if (action === 'delete' && !confirm('Remove this account and ALL of its submissions? This cannot be undone.')) return;
+    if (action === 'deactivate' && !confirm('Deactivate this account? They will be logged out and unable to sign back in.')) return;
+    const { ok, data } = await api('/api/admin-user', { method: 'POST', auth: true, body: { action, id } });
+    if (ok && data.ok) { loadAdmin(); loadMine(); }
+    else alert(data.error || 'Action failed.');
+  }
+  document.getElementById('deacAllBtn').addEventListener('click', async () => {
+    if (!confirm('Deactivate ALL student accounts? Use this when the bootcamp ends — you (owner) stay active.')) return;
+    const { ok, data } = await api('/api/admin-user', { method: 'POST', auth: true, body: { action: 'deactivate-students' } });
+    if (ok && data.ok) { alert('Deactivated ' + data.deactivated + ' student account(s).'); loadAdmin(); }
+    else alert((data && data.error) || 'Failed.');
+  });
+
+  // ---- Delegated clicks: project edit/delete + account actions ----
+  document.addEventListener('click', (e) => {
+    const ed = e.target.closest('[data-edit]');
+    if (ed) { e.preventDefault(); const p = projCache[ed.getAttribute('data-edit')]; if (p) startEdit(p); return; }
+    const dl = e.target.closest('[data-del]');
+    if (dl) { e.preventDefault(); deleteProject(dl.getAttribute('data-del')); return; }
+    const ua = e.target.closest('[data-uact]');
+    if (ua) { e.preventDefault(); handleUserAction(ua.getAttribute('data-uact'), ua.getAttribute('data-uid')); return; }
+  });
+
+  // ---- Restore session ----
+  (async () => {
+    if (!getTok()) return;
+    const { ok, data } = await api('/api/me', { auth: true });
+    if (ok && data.user) enterPortal(data.user);
+    else clearTok();
+  })();
+</script>
+</body>
+</html>

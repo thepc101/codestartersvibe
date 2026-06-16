@@ -17,6 +17,9 @@ export default async function handler(req, res) {
   if (!user || !verifyPassword(password, user.salt, user.passwordHash)) {
     return res.status(401).json({ error: 'Invalid username or password.' });
   }
+  if (user.active === false) {
+    return res.status(403).json({ error: 'This account has been deactivated. Contact the organizers.' });
+  }
 
   const token = await createSession(id);
   return res.status(200).json({ token, user: publicUser(user) });

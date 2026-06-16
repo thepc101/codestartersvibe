@@ -6,17 +6,22 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The whole front-end — landing page, account portal, and the public Showcase. No build step. |
-| `api/signup.js` | Create an account. **The first account ever created becomes the owner/admin.** |
-| `api/login.js` | Log in → returns a session token. |
+| `index.html` | Landing page (curriculum, team, public Showcase). No build step. |
+| `portal.html` | **The student portal** — accounts, publishing, account settings, owner dashboard. Its own page at `/portal.html`. |
+| `styles.css` | Shared styling for both pages. |
+| `app.js` | Shared client helpers (API client, session token, project cards, showcase). |
+| `api/signup.js` | Create an account (optional first/last name). **The first account ever created becomes the owner/admin.** |
+| `api/login.js` | Log in → returns a session token. Rejects deactivated accounts. |
 | `api/me.js` | Returns the current account for a session token. |
 | `api/logout.js` | Ends a session. |
+| `api/account-update.js` | Update your own first/last name and/or change your password. |
 | `api/submit.js` | Publish a project (**requires a logged-in account**). |
 | `api/projects.js` | Public showcase feed (newest 200). |
 | `api/mine.js` | The signed-in user's own submissions. |
 | `api/project-update.js` | Edit a submission (its author, or any admin). |
 | `api/project-delete.js` | Delete a submission (its author, or any admin). |
 | `api/admin.js` | **Owner only.** Every account + every submission (full detail). |
+| `api/admin-user.js` | **Owner only.** Deactivate / reactivate / remove an account, or bulk-deactivate all students. |
 | `api/health.js` | Connectivity check — `/api/health` returns whether Redis is wired up. |
 | `api/_redis.js`, `api/_auth.js` | Shared Redis client + auth helpers (scrypt password hashing, session tokens). |
 | `cs-logo.png` | The Codestarters brand mark. |
@@ -29,13 +34,24 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 3. Logged-in users **publish projects** → each project is stored under its own `project:<id>` key, with the id pushed onto the `cs:projects` index list. The author is the account username (no email is ever collected).
 4. The public **Showcase** on the home page renders every published project, newest first.
 5. **Edit / delete:** a user can edit or delete their own submissions (from "Your submissions" in the portal, or via the controls on cards they own). The **owner/admin can edit or delete any** submission, and the Owner dashboard shows every submission in full.
+6. **Account settings:** every user can set their first/last name and change their password from the portal.
+
+## Owner / admin powers
+
+The first account created is the permanent owner. From the portal's Owner dashboard the owner can:
+- **Deactivate** an account — they're logged out immediately and can't sign back in (their session token stops working everywhere). **Reactivate** restores access.
+- **Remove** an account — deletes the account *and* all of its submissions. Irreversible.
+- **Deactivate all students** — one button to lock every non-admin account when the bootcamp ends. The owner stays active.
+- Edit or delete any submission, and see every account + submission.
+
+Guards: the owner can't deactivate or remove their own account (no lock-out), and deactivated users are treated as signed-out across the whole API.
 
 ### Redis keys
 
 | Key | Type | Purpose |
 | --- | --- | --- |
 | `meta:owner` | string | First account's id (set once, atomically). |
-| `user:<id>` | json | Account record (username, scrypt hash + salt, role, createdAt). |
+| `user:<id>` | json | Account record (username, first/last name, scrypt hash + salt, role, active, createdAt). |
 | `user:byname:<lower>` | string | Username → id (uniqueness + login lookup). |
 | `users:all` | list | All account ids. |
 | `sess:<token>` | string (TTL 30d) | Session token → account id. |

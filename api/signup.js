@@ -8,6 +8,8 @@ export default async function handler(req, res) {
   let b = req.body; if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } } b = b || {};
   const username = String(b.username || '').trim();
   const password = String(b.password || '');
+  const firstName = String(b.firstName || '').trim().slice(0, 60);
+  const lastName = String(b.lastName || '').trim().slice(0, 60);
 
   if (!USER_RE.test(username)) return res.status(400).json({ error: 'Username must be 3–30 characters: letters, numbers, _ or .' });
   if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
@@ -24,7 +26,7 @@ export default async function handler(req, res) {
   const role = (claimedOwner === 'OK' || claimedOwner === true) ? 'admin' : 'user';
 
   const salt = makeSalt();
-  const user = { id, username, passwordHash: hashPassword(password, salt), salt, role, createdAt: Date.now() };
+  const user = { id, username, firstName, lastName, passwordHash: hashPassword(password, salt), salt, role, active: true, createdAt: Date.now() };
 
   await redis.set('user:' + id, user);
   await redis.lpush('users:all', id);

@@ -27,16 +27,24 @@ export function bearer(req) {
 }
 
 // Returns the full user record (incl. hash/salt) or null. Sanitize before sending to clients.
+// Deactivated accounts are treated as not-signed-in (locked out everywhere).
 export async function getUser(req) {
   const token = bearer(req);
   if (!token) return null;
   const id = await redis.get('sess:' + token);
   if (!id) return null;
   const user = await redis.get('user:' + id);
-  return user || null;
+  if (!user || user.active === false) return null;
+  return user;
 }
 
 // Public-safe view of a user.
 export function publicUser(u) {
-  return u ? { id: u.id, username: u.username, role: u.role, createdAt: u.createdAt } : null;
+  if (!u) return null;
+  const name = [u.firstName, u.lastName].filter(Boolean).join(' ');
+  return {
+    id: u.id, username: u.username, role: u.role,
+    firstName: u.firstName || '', lastName: u.lastName || '', name,
+    active: u.active !== false, createdAt: u.createdAt,
+  };
 }
