@@ -14,6 +14,7 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 | `api/submit.js` | Publish a project (**requires a logged-in account**). |
 | `api/projects.js` | Public showcase feed (newest 200). |
 | `api/admin.js` | **Owner only.** Every account + every submission. |
+| `api/health.js` | Connectivity check — `/api/health` returns whether Redis is wired up. |
 | `api/_redis.js`, `api/_auth.js` | Shared Redis client + auth helpers (scrypt password hashing, session tokens). |
 | `cs-logo.png` | The Codestarters brand mark. |
 | `package.json` | One dependency: `@upstash/redis`. Vercel installs it on deploy. |
@@ -38,15 +39,30 @@ Landing page, **account system**, and a **Redis-backed project showcase** for th
 
 ---
 
-## Setup: connect Redis on Vercel (one time, ~3 minutes)
+## Setup: connect Upstash Redis (one time, ~5 minutes)
 
-Until Redis is connected, accounts and publishing return a "Database not configured" message and the Showcase shows an empty state.
+Until Redis is connected, accounts and publishing return "Database not configured" and the Showcase shows an empty state. Visit **`/api/health`** any time to check the connection.
 
-1. **Import the repo into Vercel** → New Project → pick `thepc101/codestartersvibe` → Deploy. Framework preset: **Other** (no build command, no output dir — it's static files + serverless functions).
-2. In the project, open the **Storage** tab → **Create Database** → choose **Upstash for Redis** → pick a region near your users → **Create**.
-3. When prompted, **Connect** it to this project. Vercel injects the credentials as env vars automatically (`KV_REST_API_URL` + `KV_REST_API_TOKEN`, or `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — the code accepts either pair).
-4. **Redeploy** (Deployments → ⋯ → Redeploy) so the functions pick up the new env vars.
-5. Open the site, go to the portal, and **create your account first** — that one becomes the owner/admin. Done.
+### A. Create the database at Upstash
+1. Go to [console.upstash.com](https://console.upstash.com) → **Create Database** → type **Redis**. Pick a region near your users → **Create**.
+2. On the database page, open the **REST API** section. Copy these two values:
+   - **`UPSTASH_REDIS_REST_URL`** — the `https://…upstash.io` URL
+   - **`UPSTASH_REDIS_REST_TOKEN`** — the REST token
+   > Use the **REST** URL/token, **not** the `redis://` connection string — this code talks to Upstash over HTTPS.
+
+### B. Add the credentials to Vercel
+3. Import the repo into Vercel (**Add New → Project** → `thepc101/codestartersvibe`). Framework preset: **Other** (no build command — static files + serverless functions).
+4. Project → **Settings → Environment Variables**. Add both:
+   | Name | Value |
+   | --- | --- |
+   | `UPSTASH_REDIS_REST_URL` | the `https://…upstash.io` URL |
+   | `UPSTASH_REDIS_REST_TOKEN` | the REST token |
+   Apply to **Production, Preview, and Development**.
+5. **Redeploy** (Deployments → ⋯ → Redeploy) so the functions pick up the vars.
+6. Open **`https://your-site.vercel.app/api/health`** → you want `{ "ok": true, "redis": "connected" }`.
+7. Go to the portal and **create your account first** — that one becomes the owner/admin. Done.
+
+> Already created the Upstash DB via Vercel's **Storage** tab instead? That auto-injects the same vars (sometimes named `KV_REST_API_*`) — the code accepts both, so just redeploy and skip to step 6.
 
 No schema, no migrations. Upstash's free tier is plenty for a bootcamp.
 

@@ -1,10 +1,12 @@
 import { Redis } from '@upstash/redis';
 
-// Works with either the Vercel KV integration (KV_REST_API_*) or a direct
-// Upstash for Redis integration (UPSTASH_REDIS_REST_*). Whichever pair Vercel
-// injected, we pick it up.
-const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+// Reads the Upstash REST credentials. Supports both naming schemes:
+//  - Upstash console / "Upstash for Redis" on Vercel: UPSTASH_REDIS_REST_URL / _TOKEN
+//  - Older Vercel KV:                                  KV_REST_API_URL / _TOKEN
+// IMPORTANT: use the REST URL (https://…upstash.io) + REST token, NOT the redis:// URL.
+const clean = (v) => (typeof v === 'string' ? v.trim() : v);
+const url = clean(process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL);
+const token = clean(process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN);
 
 export const PROJECTS_KEY = 'cs:projects';
 export const hasRedis = Boolean(url && token);
