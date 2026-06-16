@@ -3,3 +3,7 @@ encrypt.mjs
 
 # OS / editor cruft
 .DS_Store
+
+# local preview helper
+serve.cjs
+.claude/
