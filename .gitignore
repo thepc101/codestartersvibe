@@ -1,0 +1,5 @@
+# Build-only secret: contains plaintext portal credentials — never publish
+encrypt.mjs
+
+# OS / editor cruft
+.DS_Store
